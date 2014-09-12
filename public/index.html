@@ -258,8 +258,8 @@
 			
 			socket.on('chat', function(data){
 				console.log(data);
-				$('.mouse_'+data.user+' .message').html(data.msg);
-
+				$('.mouse_'+data.user+' .message').show().html(data.msg);
+				$('.mouse_'+data.user+' .message').fadeOut(5000); 
 			});
 
 			socket.on('cursor', function(data){
