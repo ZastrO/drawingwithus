@@ -1,0 +1,299 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Socket.IO chat</title>
+		<style>
+		  * { margin: 0; padding: 0; box-sizing: border-box;text-align: center; }
+		  body { font: 13px Helvetica, Arial;width:100vw;height:100vh; }
+		  .dot { width: 3px; height: 3px; z-index: 1; }
+		  [class^='mouse_'] { position:absolute;pointer-events: none;z-index: 2;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; }
+		  [class^='mouse_'] img { float: left; }
+		  [class^='mouse_'] .message { position: absolute; top: 20px; left: 0; }
+		  [class^='mouse_']:after { content: " " attr(data-name); float: right; }
+		  canvas{ margin: 0 auto; border: 1px dotted #ccc; cursor: url('/images/pencil.cur'), url('/images/pencil.png'), crosshar; }
+		</style>
+	</head>
+	<body>
+		<canvas id="canvas" width="1170" height="800"></canvas>
+		<div class="controls">
+			<select class="control" id="brush">
+				<option value="line">Line</option>
+				<option value="dynaline">Dynamic Line</option>
+				<option value="triline">Tri Line</option>
+				<option value="squiggle10">Squiggle ^10</option>
+				<option value="squiggle25">Squiggle ^25</option>
+				<option value="spray">Spray</option>
+				<!-- <option value="test">Test</option> -->
+				<option value="circle">Circle</option>
+				<option value="spraycircle">Circle Spray</option>
+				<option value="scattercircles">Scattered Circles</option>
+				<option value="sketchy">Sketchy</option>
+			</select>
+			<select class="control" id="room">
+				<option value="lobby1">Lobby 1</option>
+				<option value="lobby2">Lobby 2</option>
+				<option value="lobby3">Lobby 3</option>
+			</select>
+			<form id="chat">
+				<input class="control" id="msg" type="text" placeholder="message">
+				<input type="submit" value="Send">
+			</form>
+			
+		</div>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+		<script>
+			if(typeof sessionStorage.id === 'undefined'){
+				sessionStorage.id = Math.floor(Math.random()*1000000);
+			}
+			if(typeof localStorage.room === 'undefined'){
+				localStorage.room = 'lobby1';
+			}
+			
+			var room = localStorage.room;
+			$('#room').val('room');
+			var id = sessionStorage.id;
+			var name = (typeof localStorage.name !== 'undefined' ? localStorage.name : 'Anon');
+			
+			var canvas = document.getElementById('canvas');
+			var context = canvas.getContext('2d');
+			context.lineJoin = 'round';
+			context.lineCap = 'round';
+			
+			var lastXY = {x:false,y:false};
+			var users = [];
+			
+			users[id] = {name:name,brush: 'line', x:0, y:0, lastX:null, lastY:null,room:room };
+			
+			var brushes = {
+				line: function(user,x,y,options){
+					context.beginPath();
+					context.moveTo(user.lastX, user.lastY);
+					context.lineTo(x, y);
+					context.stroke();
+					
+					user.lastX = x;
+					user.lastY = y;
+				},
+				triline: function(user,x,y,options){
+					context.beginPath();
+					context.moveTo(user.lastX, user.lastY);
+					context.lineTo(x, y);
+					context.moveTo(user.lastX-5, user.lastY-5);
+					context.lineTo(x-5, y-5);
+					context.moveTo(user.lastX+5, user.lastY+5);
+					context.lineTo(x+5, y+5);
+					context.stroke();
+					
+					user.lastX = x;
+					user.lastY = y;
+				},
+				squiggle10: function(user,x,y,options){
+					var randXY = {x: x-Math.floor(Math.random()*10),y: y-Math.floor(Math.random()*10)};
+					context.beginPath();
+					context.moveTo(user.lastX, user.lastY);
+					context.lineTo(randXY.x, randXY.y);
+					context.stroke();
+					
+					user.lastX = randXY.x;
+					user.lastY = randXY.y;
+				},
+				squiggle25: function(user,x,y,options){
+					var randXY = {x: x-Math.floor(Math.random()*25),y: y-Math.floor(Math.random()*25)};
+					context.beginPath();
+					context.moveTo(user.lastX, user.lastY);
+					context.lineTo(randXY.x, randXY.y);
+					context.stroke();
+					
+					user.lastX = randXY.x;
+					user.lastY = randXY.y;
+				},
+				sketchy: function(user,x,y,options){
+					context.beginPath();
+					context.moveTo(user.lastX, user.lastY);
+					context.lineTo(x, y);
+					context.moveTo(user.lastX-Math.floor(Math.random()*5), user.lastY-Math.floor(Math.random()*5));
+					context.lineTo(x, y);
+					context.moveTo(user.lastX+Math.floor(Math.random()*5), user.lastY+Math.floor(Math.random()*5));
+					context.lineTo(x, y);
+					context.stroke();
+					
+					user.lastX = x;
+					user.lastY = y;
+				},
+				dynaline: function(user,x,y,options){
+					var xmax = Math.max(x,user.lastX);
+					var ymax = Math.max(y,user.lastY);
+					var xmin = Math.min(x,user.lastX);
+					var ymin = Math.min(y,user.lastY);
+					
+					var xdif = xmax-xmin, ydif = ymax-ymin;
+					
+					if( (xdif >= 50) || (ydif >= 50) ){
+						context.lineWidth = 1;
+					} else if( (xdif > 40) || (ydif > 40) ){
+						context.lineWidth = 2;
+					} else if( (xdif > 30) || (ydif > 30) ){
+						context.lineWidth = 3;
+					} else if( (xdif > 20) || (ydif > 20) ){
+						context.lineWidth = 4;
+					} else if( (xdif <= 19) || (ydif <= 19) ){
+						context.lineWidth = 5;
+					}
+					//console.log(xdif,ydif)
+					
+					context.beginPath();
+					context.moveTo(user.lastX, user.lastY);
+					context.lineTo(x,y);
+					context.stroke();
+					
+					user.lastX = x;
+					user.lastY = y;
+				},
+				circle: function(user,x,y,options){
+					context.beginPath();
+					context.arc(x, y, 3, 0, 2 * Math.PI, false);
+					context.stroke();
+					
+					user.lastX = x;
+					user.lastY = y;
+				},
+				scattercircles: function(user,x,y,options){
+					context.beginPath();
+					context.arc(x, y, Math.floor(Math.random()*5), Math.random()*2 * Math.PI, Math.random()*2 * Math.PI, false);
+					context.stroke();
+					
+					user.lastX = x;
+					user.lastY = y;
+				},
+				spraycircle: function(user,x,y,options){
+					var spraysize = Math.floor(Math.random()*5);
+					for(var i = 0; i<spraysize; i++){
+						var randXY = {x: x-Math.floor(Math.random()*25),y: y-Math.floor(Math.random()*25)};
+						context.beginPath();
+						context.arc(randXY.x, randXY.y, Math.floor(Math.random()*5), 0, 2 * Math.PI, false);
+						context.stroke();
+					}
+					user.lastX = x;
+					user.lastY = y;
+				},
+				spray: function(user,x,y,options){
+					var spraysize = Math.floor(Math.random()*5)+5;
+					for(var i = 0; i<spraysize; i++){
+						var randXY = {x: x-Math.floor(Math.random()*25),y: y-Math.floor(Math.random()*25)};
+						context.beginPath();
+						context.fillRect(randXY.x, randXY.y, 1, 1);
+						context.stroke();
+					}
+					user.lastX = x;
+					user.lastY = y;
+				}/*,
+				test: function(user,x,y,options){
+					context.beginPath();
+					context.moveTo(user.lastX, user.lastY);
+					context.lineTo(x, y);
+					context.stroke();
+					
+					user.lastX = x;
+					user.lastY = y;
+				}*/
+			};
+			
+			function draw(x,y,id,brush){
+				var user = users[id];
+				var offset = $('#canvas').offset();
+				/*var xOffset = ($('body').width() - canvas.width) / 2;*/
+				x = (x - offset.left);
+				y = (y - offset.top);
+				
+				context.fillStyle = '#'+id;
+				context.lineWidth = 2;
+				context.strokeStyle = '#'+id;
+				/*context.fillRect(x,y,3,3);*/
+				if( !user.lastX && !user.lastY ){
+						context.beginPath();
+						context.moveTo(x, y);
+						user.lastX = x;
+						user.lastY = y;
+				} else {
+					brushes[brush](user,x,y);
+				}
+				
+			}
+			
+			var socket = io();
+			var drawNow = false;
+			
+			socket.emit('init', {id:id, name:name, room:users[id].room});
+			
+			$('#brush').change(function(e){
+				var val = $(e.target).val();
+				console.log('Brush',val);
+				users[id].brush = val;
+			});
+			
+			$('#room').change(function(e){
+				var val = $(e.target).val();
+				localStorage.room = val;
+				socket.emit('room',{user:id,name:name,roomFrom:room,roomTo:$(e.target).val()});
+				room = val;
+			});
+			
+			$('#chat').submit(function(e){
+				e.preventDefault();
+				var val = $(e.target).find('#msg').val();
+				socket.emit('chat',{user:id,name:name,room:room,msg:val});
+			});
+			
+			$('body').mousedown(function(){ drawNow = true; });
+			$('body').mouseup(function(){ drawNow = false; users[id].lastX = false; users[id].lastY = false; });
+			
+			$('#canvas').mousemove(function(e){
+	
+				if(drawNow){
+					draw(e.clientX,e.clientY,id,users[id].brush);
+				}
+				socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:e.clientX,y:e.clientY, room:users[id].room});
+			});
+			
+			socket.on('chat', function(data){
+				console.log(data);
+				$('.mouse_'+data.user+' .message').html(data.msg);
+
+			});
+
+			socket.on('cursor', function(data){
+				if( ($('.mouse_'+data.id).length < 1) && (data.room == users[id].room) && (data.id != id) ){
+					users[data.id] = {name:data.name,brush:data.brush, x:data.x, y:data.y, lastX:null, lastY:null, room:data.room };
+					$('body').append($('<div class="mouse_'+data.id+'" data-name="'+data.name+'" style="top:'+data.y+'px;left:'+data.x+'px;"><img src="/images/pencil.png" ><div class="message"></div></div>'));
+				} else if (data.room == users[id].room) {
+					$('.mouse_'+data.id).css({
+						'top': (data.y-16)+'px',
+						'left': data.x+'px'
+					});
+				} else if (data.room != users[id].room) {
+					$('.mouse_'+data.id).remove();
+				}
+				
+				if(data.drawNow){
+					draw(data.x,data.y,data.id,data.brush);
+				} else {
+					users[data.id].lastX = false;
+					users[data.id].lastY = false;
+				}
+			});
+			
+			setInterval(function(){
+				context.fillStyle = 'rgba(255,255,255,.05)';
+				context.fillRect( 0, 0, $(canvas).width(), $(canvas).height());
+			}, 1500);
+
+
+			window.onbeforeunload = closingCode;
+			function closingCode(){
+				socket.emit('exit',{user:id,name:name,roomFrom:room});
+			   return null;
+			}
+		</script>
+	</body>
+</html>
