@@ -7,6 +7,7 @@
 	<body>
 		<canvas id="canvas" width="1170" height="800"></canvas>
 		<ul class="userList"></ul>
+		<button id="voteToClear">Vote To Clear</button>
 		<div class="controls">
 			<select class="control" id="brush">
 				<option value="line">Line</option>
@@ -266,6 +267,9 @@
 					}
 				);
 			});
+			$('#voteToClear').click(function() {
+				socket.emit('initVote', {id:id, name:name, room:users[id].room});
+			});
 			
 			$('body').mousedown(function(){ drawNow = true; });
 			$('body').mouseup(function(){ drawNow = false; users[id].lastX = false; users[id].lastY = false; });
@@ -313,6 +317,10 @@
 				$.each(data, function() {
 					$('.userList').append('<li>'+this.name+'<div style="background: #'+this.id+';" title="#'+this.id+'"></div></li>');
 				});
+			});
+
+			socket.on('clear', function() {
+				context.clearRect(0, 0, canvas.width, canvas.height);
 			});
 			
 			setInterval(function(){

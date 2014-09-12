@@ -15,6 +15,7 @@ var rooms = {
 	lobby2: {
 		bg_color: '#888',
 		users: {}
+
 	},
 	lobby3: {
 		bg_color: '#000',
@@ -67,6 +68,25 @@ io.on('connection', function(socket){
 		console.log(data.name+" ["+data.msg+"] ");
 
 	});
+
+	socket.on('initVote', function(data) {
+		rooms[data.room].users[socket.id].voteToClear = "Y";
+		var bool = true;
+		for(var key in rooms[data.room].users) {
+			var obj = rooms[data.room].users[key];
+
+			if(typeof obj.voteToClear == 'undefined' || obj.voteToClear == 'N') {
+				bool = false;
+			}
+		}
+		if(bool == true) {
+			io.to(data.room).emit('clear', {});
+			for(var key in rooms[data.room].users) {
+				rooms[data.room].users[key].voteToClear = 'N';
+			}
+		}
+	});
+
 });
 
 http.listen(1337, function(){
