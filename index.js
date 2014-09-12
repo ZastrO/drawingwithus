@@ -25,21 +25,33 @@ var rooms = {
 
 io.on('connection', function(socket){
 	socket.on('init', function(data){
-		rooms[data.room].users[socket.id] = data.id;
+		rooms[data.room].users[socket.id] = {name: data.name, id: data.id};
 		socket.join(data.room);
+
+
+		io.to(data.room).emit('users', rooms[data.room].users);
+
 		console.log(data.room,rooms[data.room]);
 	});
 	
 	socket.on('room',function(data){
 		socket.leave(data.roomFrom);
 		delete rooms[data.roomFrom].users[socket.id];
+		rooms[data.roomTo].users[socket.id] = {name: data.name, id: data.id};
 		socket.join(data.roomTo);
-		
+
+
+		io.to(data.roomFrom).emit('users', rooms[data.roomFrom].users);
+		io.to(data.roomTo).emit('users', rooms[data.roomTo].users);
+
 		console.log(data.name+" transfered from <"+data.roomFrom+"> to <"+data.roomTo+">");
 	});
 	socket.on('exit',function(data){
 		socket.leave(data.roomFrom);
 		delete rooms[data.roomFrom].users[socket.id];
+
+		io.to(data.roomFrom).emit('users', rooms[data.roomFrom].users);
+
 		console.log(data.name+" has left");
 	});
 

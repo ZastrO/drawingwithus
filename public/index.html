@@ -16,6 +16,7 @@
 	</head>
 	<body>
 		<canvas id="canvas" width="1170" height="800"></canvas>
+		<ol class="userList"></ol>
 		<div class="controls">
 			<select class="control" id="brush">
 				<option value="line">Line</option>
@@ -309,6 +310,13 @@
 					users[data.id].lastX = false;
 					users[data.id].lastY = false;
 				}
+			});
+
+			socket.on('users', function(data) {
+				$('.userList').empty();
+				$.each(data, function() {
+					$('.userList').append('<li>'+this.name+'</li>');
+				});
 			});
 			
 			setInterval(function(){
