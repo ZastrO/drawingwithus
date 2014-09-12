@@ -254,6 +254,7 @@
 				//if(drawNow){
 				//	draw(x,y,id,users[id].brush); //possibles: e.pageX,e.clientX,x
 				//}
+				
 				socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:x,y:y, room:users[id].room});
 			});
 			
