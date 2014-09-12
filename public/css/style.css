@@ -1,0 +1,47 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	text-align: center;
+}
+body {
+	font: 13px Helvetica, Arial;
+	width:100vw;
+	height:100vh;
+}
+.dot {
+	width: 3px;
+	height: 3px;
+	z-index: 1;
+}
+[class^='mouse_'] {
+	position:absolute;
+	pointer-events: none;
+	z-index: 2;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+[class^='mouse_'] img {
+	float: left;
+}
+[class^='mouse_'] .message {
+	position: absolute;
+	top: 20px;
+	left: 0;
+}
+[class^='mouse_']:after {
+	content: " " attr(data-name);
+	float: right;
+}
+canvas{
+	margin: 0 auto;
+	border: 1px dotted #ccc;
+	cursor: url('/images/pencil.cur'), url('/images/pencil.png'), crosshar;
+}
+#msgBox {
+	position: relative;
+}
