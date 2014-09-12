@@ -50,7 +50,7 @@
 			}
 			
 			var room = localStorage.room;
-			$('#room').val('room');
+			$('#room').val(room);
 			var id = sessionStorage.id;
 			var name = (typeof localStorage.name !== 'undefined' ? localStorage.name : 'Anon');
 			
@@ -242,6 +242,7 @@
 				e.preventDefault();
 				var val = $(e.target).find('#msg').val();
 				socket.emit('chat',{user:id,name:name,room:room,msg:val});
+				$(e.target).find('#msg').val('')
 			});
 			
 			$('body').mousedown(function(){ drawNow = true; });
