@@ -49,6 +49,16 @@
 					user.lastX = x;
 					user.lastY = y;
 				},
+				thinline: function(user,x,y,options){
+					context.lineWidth = 1;
+					context.beginPath();
+					context.moveTo(user.lastX, user.lastY);
+					context.lineTo(x, y);
+					context.stroke();
+					
+					user.lastX = x;
+					user.lastY = y;
+				},
 				triline: function(user,x,y,options){
 					context.beginPath();
 					context.moveTo(user.lastX, user.lastY);
@@ -267,7 +277,7 @@
 					$('.mouse_'+data.id).remove();
 				}
 				
-				if(data.drawNow){
+				if(data.drawNow && (data.id != id)){
 					draw(data.x,data.y,data.id,data.brush);
 				} else {
 					users[data.id].lastX = false;
