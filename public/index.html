@@ -63,6 +63,10 @@
 			
 			var canvas = document.getElementById('canvas');
 			var context = canvas.getContext('2d');
+			var offset = $('#canvas').offset();
+				$( window ).resize(function() {
+					offset = $('#canvas').offset();
+				});
 			context.lineJoin = 'round';
 			context.lineCap = 'round';
 			
@@ -207,10 +211,10 @@
 			
 			function draw(x,y,id,brush){
 				var user = users[id];
-				var offset = $('#canvas').offset();
+				//var offset = $('#canvas').offset();
 				/*var xOffset = ($('body').width() - canvas.width) / 2;*/
-				x = (x - offset.left);
-				y = (y - offset.top);
+				//x = (x - offset.left);
+				//y = (y - offset.top);
 				
 				context.fillStyle = '#'+id;
 				context.lineWidth = 2;
@@ -267,11 +271,13 @@
 			$('body').mouseup(function(){ drawNow = false; users[id].lastX = false; users[id].lastY = false; });
 			
 			$('#canvas').mousemove(function(e){
-	
+				var x = (e.pageX - offset.left);
+				var y = (e.pageY - offset.top);
+				
 				if(drawNow){
-					draw(e.pageX,e.pageY,id,users[id].brush);
+					draw(x,y,id,users[id].brush); //possibles: e.pageX,e.clientX,x
 				}
-				socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:e.pageX,y:e.pageY, room:users[id].room});
+				socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:x,y:y, room:users[id].room});
 			});
 			
 			socket.on('chat', function(data){
@@ -284,11 +290,11 @@
 			socket.on('cursor', function(data){
 				if( ($('.mouse_'+data.id).length < 1) && (data.room == users[id].room) && (data.id != id) ){
 					users[data.id] = {name:data.name,brush:data.brush, x:data.x, y:data.y, lastX:null, lastY:null, room:data.room };
-					$('body').append($('<div class="mouse_'+data.id+'" data-name="'+data.name+'" style="top:'+data.y+'px;left:'+data.x+'px;"><img src="/images/pencil.png" ><div class="message"></div></div>'));
+					$('body').append($('<div class="mouse_'+data.id+'" data-name="'+data.name+'" style="top:'+(data.y+offset.top)+'px;left:'+(data.x+offset.left)+'px;"><img src="/images/pencil.png" ><div class="message"></div></div>'));
 				} else if (data.room == users[id].room) {
 					$('.mouse_'+data.id).css({
-						'top': (data.y-16)+'px',
-						'left': data.x+'px'
+						'top': ((data.y+offset.top)-16)+'px',
+						'left': (data.x+offset.left)+'px'
 					});
 				} else if (data.room != users[id].room) {
 					$('.mouse_'+data.id).remove();
