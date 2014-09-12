@@ -260,7 +260,7 @@
 				var val = $(e.target).find('#msg').val();
 				socket.emit('chat',{user:id,name:name,room:room,msg:val});
 				$(e.target).find('#msg').val('')
-				$('#msgBox').append('<div class="msgBubble" style="position:absolute;" >'+val+'</div>');
+				$('#msgBox').append('<div class="msgBubble" style="position:absolute; text-align: center; width: 100%;" >'+val+'</div>');
 				$('#msgBox .msgBubble:last-of-type').animate(
 					{
 						top: '-150px',
