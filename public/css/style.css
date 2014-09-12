@@ -5,11 +5,36 @@
 	text-align: center;
 }
 
+@keyframes gradShift {
+
+	0% {
+		filter: hue-rotate(0deg);
+		-webkit-filter: hue-rotate(0deg);
+	}
+	33% {
+		filter: hue-rotate(160deg);
+		-webkit-filter: hue-rotate(160deg);
+	}
+	66%{
+		filter: hue-rotate(270deg);
+		-webkit-filter: hue-rotate(270deg);
+	}
+	99% {
+		filter: hue-rotate(360deg);
+		-webkit-filter: hue-rotate(360deg);
+	}
+}
 
 body {
 	font: 13px Helvetica, Arial;
-	width:100vw;
-	height:100vh;
+}
+.bg{
+	position: absolute;
+	width:100%;
+	height:100%;
+	z-index: -1;
+	animation: gradShift 180s;
+	-webkit-animation: gradShift 180s;
 	background: #e570e7;
 	background: -moz-linear-gradient(top, #e570e7 0%, #c85ec7 6%, #c85ec7 6%, #a849a3 15%, #fef9ff 17%) no-repeat;
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e570e7), color-stop(6%,#c85ec7), color-stop(6%,#c85ec7), color-stop(15%,#a849a3), color-stop(17%,#fef9ff)) no-repeat;
