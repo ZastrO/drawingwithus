@@ -38,7 +38,7 @@ io.on('connection', function(socket){
 	socket.on('room',function(data){
 		socket.leave(data.roomFrom);
 		delete rooms[data.roomFrom].users[socket.id];
-		rooms[data.roomTo].users[socket.id] = {name: data.name, id: data.id};
+		rooms[data.roomTo].users[socket.id] = {name: data.name, id: data.user};
 		socket.join(data.roomTo);
 
 
@@ -46,6 +46,7 @@ io.on('connection', function(socket){
 		io.to(data.roomTo).emit('users', rooms[data.roomTo].users);
 
 		console.log(data.name+" transfered from <"+data.roomFrom+"> to <"+data.roomTo+">");
+		console.log(data.roomTo, rooms[data.roomTo]);
 	});
 	socket.on('exit',function(data){
 		socket.leave(data.roomFrom);
@@ -74,7 +75,6 @@ io.on('connection', function(socket){
 		var bool = true;
 		for(var key in rooms[data.room].users) {
 			var obj = rooms[data.room].users[key];
-
 			if(typeof obj.voteToClear == 'undefined' || obj.voteToClear == 'N') {
 				bool = false;
 			}

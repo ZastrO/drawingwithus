@@ -248,7 +248,7 @@
 				var val = $(e.target).val();
 				localStorage.room = val;
 				socket.emit('room',{user:id,name:name,roomFrom:room,roomTo:$(e.target).val()});
-				room = val;
+				users[id].room = room = val;
 			});
 			
 			$('#chat').submit(function(e){
