@@ -53,6 +53,16 @@
 			$('#room').val(room);
 			var id = sessionStorage.id;
 
+			if( navigator.userAgent.indexOf("Chrome/") > 0 ) {
+				localStorage.name = "Chrome";
+			} else if( navigator.userAgent.indexOf("Safari/") > 0 ) {
+				localStorage.name = "Safari";
+			} else if( navigator.userAgent.indexOf("Firefox/") > 0 ) {
+				localStorage.name = "FireFox";
+			} else if( navigator.userAgent.indexOf(".NET") > 0 ) {
+				localStorage.name = "Explorer";
+			}
+
 			if(typeof localStorage.name == 'undefined'){
 				localStorage.name = prompt("What would you like to appear to other users as?","Choose a Nickname");
 			}
