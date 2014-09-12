@@ -11,6 +11,7 @@
 		  [class^='mouse_'] .message { position: absolute; top: 20px; left: 0; }
 		  [class^='mouse_']:after { content: " " attr(data-name); float: right; }
 		  canvas{ margin: 0 auto; border: 1px dotted #ccc; cursor: url('/images/pencil.cur'), url('/images/pencil.png'), crosshar; }
+		  #msgBox { position: relative; }
 		</style>
 	</head>
 	<body>
@@ -258,6 +259,17 @@
 				var val = $(e.target).find('#msg').val();
 				socket.emit('chat',{user:id,name:name,room:room,msg:val});
 				$(e.target).find('#msg').val('')
+				$('#msgBox').append('<div class="msgBubble" style="position:absolute;" >'+val+'</div>');
+				$('#msgBox .msgBubble:last-of-type').animate(
+					{
+						top: '-150px',
+						opacity: '0'
+					},
+					5000,
+					function(){
+						$(this).remove();
+					}
+				);
 			});
 			
 			$('body').mousedown(function(){ drawNow = true; });
@@ -276,17 +288,6 @@
 				$('.mouse_'+data.user+' .message').stop().css('opacity','1').show().html(data.msg);
 				$('.mouse_'+data.user+' .message').fadeOut(5000); 
 
-				$('#msgBox').append('<div class="msgBubble" style="position:relative;" >'+data.msg+'</div>');
-				$('#msgBox .msgBubble:last-of-type').animate(
-					{
-						top: '-150px',
-						opacity: '0'
-					},
-					5000,
-					function(){
-						$(this).remove();
-					}
-				);
 			});
 
 			socket.on('cursor', function(data){
