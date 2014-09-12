@@ -269,9 +269,9 @@
 			$('#canvas').mousemove(function(e){
 	
 				if(drawNow){
-					draw(e.clientX,e.clientY,id,users[id].brush);
+					draw(e.pageX,e.pageY,id,users[id].brush);
 				}
-				socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:e.clientX,y:e.clientY, room:users[id].room});
+				socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:e.pageX,y:e.pageY, room:users[id].room});
 			});
 			
 			socket.on('chat', function(data){
