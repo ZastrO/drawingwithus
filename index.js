@@ -52,7 +52,7 @@ io.on('connection', function(socket){
 	socket.on('chat', function(data){
 		
 		io.to(data.room).emit('chat',data);
-		console.log(data.name+" <"+data.msg+"> ");
+		console.log(data.name+" ["+data.msg+"] ");
 
 	});
 });
