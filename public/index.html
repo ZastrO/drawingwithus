@@ -6,7 +6,7 @@
 	</head>
 	<body>
 		<canvas id="canvas" width="1170" height="800"></canvas>
-		<ol class="userList"></ol>
+		<ul class="userList"></ul>
 		<div class="controls">
 			<select class="control" id="brush">
 				<option value="line">Line</option>
@@ -305,7 +305,7 @@
 			socket.on('users', function(data) {
 				$('.userList').empty();
 				$.each(data, function() {
-					$('.userList').append('<li>'+this.name+'</li>');
+					$('.userList').append('<li>'+this.name+'<div style="width: 20px; height: 10px; background: #'+this.id+';" title="#'+this.id+'"></div></li>');
 				});
 			});
 			
