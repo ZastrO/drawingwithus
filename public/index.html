@@ -52,7 +52,11 @@
 			var room = localStorage.room;
 			$('#room').val(room);
 			var id = sessionStorage.id;
-			var name = (typeof localStorage.name !== 'undefined' ? localStorage.name : 'Anon');
+
+			if(typeof localStorage.name == 'undefined'){
+				localStorage.name = prompt("What would you like to appear to other users as?","Choose a Nickname");
+			}
+			var name = localStorage.name;
 			
 			var canvas = document.getElementById('canvas');
 			var context = canvas.getContext('2d');
@@ -258,7 +262,7 @@
 			
 			socket.on('chat', function(data){
 				console.log(data);
-				$('.mouse_'+data.user+' .message').show().html(data.msg);
+				$('.mouse_'+data.user+' .message').stop().css('opacity','1').show().html(data.msg);
 				$('.mouse_'+data.user+' .message').fadeOut(5000); 
 			});
 
