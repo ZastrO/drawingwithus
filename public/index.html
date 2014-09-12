@@ -305,7 +305,7 @@
 			socket.on('users', function(data) {
 				$('.userList').empty();
 				$.each(data, function() {
-					$('.userList').append('<li>'+this.name+'<div style="width: 20px; height: 10px; background: #'+this.id+';" title="#'+this.id+'"></div></li>');
+					$('.userList').append('<li>'+this.name+'<div style="background: #'+this.id+';" title="#'+this.id+'"></div></li>');
 				});
 			});
 			

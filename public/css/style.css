@@ -55,3 +55,18 @@ canvas{
 #msgBox {
 	position: relative;
 }
+.userList {
+    width: 120px;
+    margin: 0 auto;
+}
+.userList li {
+    list-style-type: none;
+    text-align: left;
+}
+.userList li div{
+	width: 20px;
+	height: 10px;
+	margin: 0px 10px;
+	display: inline-block;
+	float:right;
+}
