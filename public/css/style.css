@@ -63,11 +63,15 @@ body {
 	background: linear-gradient(to bottom, #e570e7 0%,#c85ec7 6%,#c85ec7 6%,#a849a3 15%,#fef9ff 17%) no-repeat;
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e570e7', endColorstr='#fef9ff',GradientType=0 ) no-repeat;
 }
-.dot {
-	width: 3px;
-	height: 3px;
-	z-index: 1;
+
+canvas{
+	margin: 50px 0 10px 0;
+	outline: 10px solid #eee;
+	box-shadow: 0px 0px 10px 10px rgba(0,0,0,.2);
+	background: #fff;
+	cursor: url('/images/pencil.cur'), url('/images/pencil.png'), crosshair;
 }
+
 [class^='mouse_'] {
 	position:absolute;
 	pointer-events: none;
@@ -91,16 +95,11 @@ body {
 	content: " " attr(data-name);
 	float: right;
 }
-canvas{
-	margin: 10px;
-	outline: 10px solid #eee;
-	box-shadow: 0px 0px 10px 10px rgba(0,0,0,.2);
-	background: #fff;
-	cursor: url('/images/pencil.cur'), url('/images/pencil.png'), crosshair;
-}
+
 #msgBox {
 	position: relative;
 }
+
 .userList {
     width: 120px;
     margin: 0 auto;
