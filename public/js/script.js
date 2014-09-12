@@ -251,9 +251,9 @@
 				var x = (e.pageX - offset.left);
 				var y = (e.pageY - offset.top);
 				
-				if(drawNow){
-					draw(x,y,id,users[id].brush); //possibles: e.pageX,e.clientX,x
-				}
+				//if(drawNow){
+				//	draw(x,y,id,users[id].brush); //possibles: e.pageX,e.clientX,x
+				//}
 				socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:x,y:y, room:users[id].room});
 			});
 			
@@ -277,7 +277,7 @@
 					$('.mouse_'+data.id).remove();
 				}
 				
-				if(data.drawNow && (data.id != id)){
+				if(data.drawNow){
 					draw(data.x,data.y,data.id,data.brush);
 				} else {
 					users[data.id].lastX = false;
