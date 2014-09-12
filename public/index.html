@@ -38,6 +38,7 @@
 				<input class="control" id="msg" type="text" placeholder="message">
 				<input type="submit" value="Send">
 			</form>
+			<div id="msgBox"></div>
 		</div>
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
@@ -274,6 +275,18 @@
 				console.log(data);
 				$('.mouse_'+data.user+' .message').stop().css('opacity','1').show().html(data.msg);
 				$('.mouse_'+data.user+' .message').fadeOut(5000); 
+
+				$('#msgBox').append('<div class="msgBubble" style="position:relative;" >'+data.msg+'</div>');
+				$('#msgBox .msgBubble:last-of-type').animate(
+					{
+						top: '150px',
+						opacity: '0'
+					},
+					5000,
+					function(){
+						$(this).remove();
+					}
+				);
 			});
 
 			socket.on('cursor', function(data){
