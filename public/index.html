@@ -3,11 +3,13 @@
 	<head>
 		<title>Drawing With Us!</title>
 		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" media="screen" type="text/css" href="css/colorpicker.css" />
 	</head>
 	<body>
 		<div class="bg"></div>
 		<canvas id="canvas" width="1170" height="800"></canvas>
 		<ul class="userList"></ul>
+		<div id="colorSelector"><div></div></div>
 		<button id="voteToClear">Vote To Clear</button>
 		<div class="controls">
 			<select class="control" id="brush">
@@ -37,6 +39,8 @@
 		</div>
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+		<script type="text/javascript" src="js/colorpicker.js"></script>
 		<script src="/js/script.js"></script>
 	</body>
 </html>

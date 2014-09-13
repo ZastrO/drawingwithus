@@ -1,4 +1,3 @@
-
 			if(typeof sessionStorage.id === 'undefined'){
 				sessionStorage.id = Math.floor(Math.random()*1000000);
 			}
@@ -9,6 +8,7 @@
 			var room = localStorage.room;
 			$('#room').val(room);
 			var id = sessionStorage.id;
+
 
 			if( navigator.userAgent.indexOf("Chrome/") > 0 ) {
 				localStorage.name = "Chrome";
@@ -36,8 +36,26 @@
 			
 			var lastXY = {x:false,y:false};
 			var users = [];
+			var color = id;
 			
-			users[id] = {name:name,brush: 'line', x:0, y:0, lastX:null, lastY:null,room:room };
+			users[id] = {name:name,brush: 'line', x:0, y:0, lastX:null, lastY:null,room:room, color:id };
+
+			$('#colorSelector').ColorPicker({
+				color: '#'+id,
+				onShow: function (colpkr) {
+					$(colpkr).fadeIn(500);
+					return false;
+				},
+				onHide: function (colpkr) {
+					$(colpkr).fadeOut(500);
+					return false;
+				},
+				onChange: function (hsb, hex, rgb) {
+					$('#colorSelector div').css('backgroundColor', '#' + hex);
+					color = users[id].color = hex;
+					socket.emit('colorPicker', {id:id, room:users[id].room, color: hex });
+				}
+			});
 			
 			var brushes = {
 				line: function(user,x,y,options){
@@ -190,9 +208,9 @@
 				//x = (x - offset.left);
 				//y = (y - offset.top);
 				
-				context.fillStyle = '#'+id;
+				context.fillStyle = '#'+users[id].color;
 				context.lineWidth = 2;
-				context.strokeStyle = '#'+id;
+				context.strokeStyle = '#'+users[id].color;
 				/*context.fillRect(x,y,3,3);*/
 				if( !user.lastX && !user.lastY ){
 						context.beginPath();
@@ -208,7 +226,7 @@
 			var socket = io();
 			var drawNow = false;
 			
-			socket.emit('init', {id:id, name:name, room:users[id].room});
+			socket.emit('init', {id:id, name:name, room:users[id].room, color: id});
 			
 			$('#brush').change(function(e){
 				var val = $(e.target).val();
@@ -255,7 +273,7 @@
 				//	draw(x,y,id,users[id].brush); //possibles: e.pageX,e.clientX,x
 				//}
 				
-				socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:x,y:y, room:users[id].room});
+				socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:x,y:y, room:users[id].room, color:users[id].color});
 			});
 			
 			socket.on('chat', function(data){
@@ -267,7 +285,7 @@
 
 			socket.on('cursor', function(data){
 				if( ($('.mouse_'+data.id).length < 1) && (data.room == users[id].room) && (data.id != id) ){
-					users[data.id] = {name:data.name,brush:data.brush, x:data.x, y:data.y, lastX:null, lastY:null, room:data.room };
+					users[data.id] = {name:data.name,brush:data.brush, x:data.x, y:data.y, lastX:null, lastY:null, room:data.room, color: data.color };
 					$('body').append($('<div class="mouse_'+data.id+'" data-name="'+data.name+'" style="top:'+(data.y+offset.top)+'px;left:'+(data.x+offset.left)+'px;"><img src="/images/pencil.png" ><div class="message"></div></div>'));
 				} else if (data.room == users[id].room) {
 					$('.mouse_'+data.id).css({
@@ -291,6 +309,9 @@
 				$.each(data, function() {
 					$('.userList').append('<li>'+this.name+'<div style="background: #'+this.id+';" title="#'+this.id+'"></div></li>');
 				});
+			});
+			socket.on('colorUpdate', function(data) {
+				users[data.id].color = data.color;
 			});
 
 			socket.on('clear', function() {

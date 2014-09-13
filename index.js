@@ -86,6 +86,13 @@ io.on('connection', function(socket){
 			}
 		}
 	});
+	socket.on('colorPicker', function(data) {
+		rooms[data.room].users[socket.id].id = data.color;
+		io.to(data.room).emit('colorUpdate', data);
+		console.log(rooms[data.room].users);
+
+		io.to(data.room).emit('users', rooms[data.room].users);
+	});
 
 });
 
