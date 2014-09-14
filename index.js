@@ -46,7 +46,7 @@ io.on('connection', function(socket){
 		io.to(data.roomTo).emit('users', rooms[data.roomTo].users);
 
 		console.log(data.name+" transfered from <"+data.roomFrom+"> to <"+data.roomTo+">");
-		console.log(data.roomTo, rooms[data.roomTo]);
+		console.log(data.roomTo, rooms[data.roomTo].users);
 	});
 
 	socket.on('canvas',function(data){
