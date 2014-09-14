@@ -26,22 +26,23 @@ var rooms = {
 
 io.on('connection', function(socket){
 	socket.on('init', function(data){
-		rooms[data.room].users[socket.id] = {name: data.name, id: data.id};
+		rooms[data.room].users[socket.id] = {name: data.name, id: data.id, color:data.color};
 		socket.join(data.room);
 
 
 		io.to(data.room).emit('users', rooms[data.room].users);
+		socket.emit('newRoom',rooms[data.room].dataURL);
 
-		console.log(data.room,rooms[data.room]);
+		console.log(data.room,rooms[data.room].users);
 	});
 	
 	socket.on('room',function(data){
 		socket.leave(data.roomFrom);
 		delete rooms[data.roomFrom].users[socket.id];
-		rooms[data.roomTo].users[socket.id] = {name: data.name, id: data.user};
+		rooms[data.roomTo].users[socket.id] = {name: data.name, id: data.id};
 		socket.join(data.roomTo);
 
-		socket.emit('newRoom',rooms[data.roomTo].dataURL)
+		socket.emit('newRoom',rooms[data.roomTo].dataURL);
 		io.to(data.roomFrom).emit('users', rooms[data.roomFrom].users);
 		io.to(data.roomTo).emit('users', rooms[data.roomTo].users);
 
@@ -91,7 +92,7 @@ io.on('connection', function(socket){
 		}
 	});
 	socket.on('colorPicker', function(data) {
-		rooms[data.room].users[socket.id].id = data.color;
+		rooms[data.room].users[socket.id].color = data.color;
 		io.to(data.room).emit('colorUpdate', data);
 		console.log(rooms[data.room].users);
 
