@@ -98,6 +98,8 @@ canvas{
 
 #msgBox {
 	position: relative;
+	pointer-events: none;
+	top: -20px;
 }
 
 .userList {
