@@ -318,7 +318,7 @@ socket.on('cursor', function(data){
 socket.on('users', function(data) {
 	$('.userList').empty();
 	$.each(data, function() {
-		$('.userList').append('<li>'+this.name+'<div style="background: #'+this.id+';" title="#'+this.id+'"></div></li>');
+		$('.userList').append('<li>'+this.name+'<div style="background: #'+this.color+';" title="#'+this.color+'"></div></li>');
 	});
 });
 socket.on('colorUpdate', function(data) {
