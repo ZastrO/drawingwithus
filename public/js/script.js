@@ -269,14 +269,15 @@
 				var x = (e.pageX - offset.left);
 				var y = (e.pageY - offset.top);
 				
-				if(drawNow){
-					socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:x,y:y, room:users[id].room, dataURL:context.toDataURL(), color:users[id].color});
-				} else{
-					socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:x,y:y, room:users[id].room, color:users[id].color});
-				}
+				socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:x,y:y, room:users[id].room, color:users[id].color});
 				
 			});
 			
+			var canvasSnap = setInterval(
+				function(){ socket.emit('canvas', {room:users[id].room, dataURL:canvas.toDataURL()}) },
+				5000
+			);
+
 			socket.on('chat', function(data){
 				console.log(data);
 				$('.mouse_'+data.user+' .message').stop().css('opacity','1').show().html(data.msg);
