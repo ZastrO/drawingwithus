@@ -269,11 +269,12 @@
 				var x = (e.pageX - offset.left);
 				var y = (e.pageY - offset.top);
 				
-				//if(drawNow){
-				//	draw(x,y,id,users[id].brush); //possibles: e.pageX,e.clientX,x
-				//}
+				if(drawNow){
+					socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:x,y:y, room:users[id].room, dataURL:context.toDataURL(), color:users[id].color});
+				} else{
+					socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:x,y:y, room:users[id].room, color:users[id].color});
+				}
 				
-				socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:x,y:y, room:users[id].room, color:users[id].color});
 			});
 			
 			socket.on('chat', function(data){
@@ -281,6 +282,15 @@
 				$('.mouse_'+data.user+' .message').stop().css('opacity','1').show().html(data.msg);
 				$('.mouse_'+data.user+' .message').fadeOut(5000); 
 
+			});
+
+			socket.on('newRoom', function(data){
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				var img = new Image;
+				img.onload = function(){
+				  context.drawImage(img,0,0); // Or at whatever offset you like
+				};
+				img.src = data;
 			});
 
 			socket.on('cursor', function(data){

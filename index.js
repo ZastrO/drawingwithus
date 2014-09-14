@@ -41,7 +41,7 @@ io.on('connection', function(socket){
 		rooms[data.roomTo].users[socket.id] = {name: data.name, id: data.user};
 		socket.join(data.roomTo);
 
-
+		io.sockets.socket(socket.id).emit('newRoom',rooms[data.roomTo].dataURL)
 		io.to(data.roomFrom).emit('users', rooms[data.roomFrom].users);
 		io.to(data.roomTo).emit('users', rooms[data.roomTo].users);
 
@@ -58,7 +58,9 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('coordinates', function(data){
-		
+		if( data.dataURL ){
+			rooms[data.room].dataURL = data.dataURL;
+		}
 		io.to(data.room).emit('cursor',data);
 
 	});
