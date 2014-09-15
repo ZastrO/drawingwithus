@@ -14,8 +14,8 @@ var rooms = {
 		owner: "String",
 		encapsulation: {
 			accessLevel: 1,
-			blacklist: (123456, 123455, 123454),
-			whitelist: (234567, 234566)
+			blacklist: ["123456", "123455", "123454"],
+			whitelist: ["234567", "234566"]
 		},
 		fadeTime: ".1",
 		lastModified: "1970-01-01 00:00:01",
@@ -30,7 +30,7 @@ var rooms = {
 	lobby3: {
 		bg_color: '#000',
 		users: {}
-	},
+	}
 };
 
 
