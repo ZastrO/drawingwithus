@@ -7,35 +7,38 @@
 	</head>
 	<body>
 		<div class="bg"></div>
-		<canvas id="canvas" width="1170" height="800"></canvas>
-		<ul class="userList"></ul>
-		<div id="colorSelector"><div></div></div>
-		<button id="voteToClear">Vote To Clear</button>
-		<div class="controls">
-			<select class="control" id="brush">
-				<option value="line">Line</option>
-				<option value="thinline">Thin Line</option>
-				<option value="dynaline">Dynamic Line</option>
-				<option value="triline">Tri Line</option>
-				<option value="squiggle10">Squiggle ^10</option>
-				<option value="squiggle25">Squiggle ^25</option>
-				<option value="spray">Spray</option>
-				<!-- <option value="test">Test</option> -->
-				<option value="circle">Circle</option>
-				<option value="spraycircle">Circle Spray</option>
-				<option value="scattercircles">Scattered Circles</option>
-				<option value="sketchy">Sketchy</option>
-			</select>
-			<select class="control" id="room">
-				<option value="lobby1">Lobby 1</option>
-				<option value="lobby2">Lobby 2</option>
-				<option value="lobby3">Lobby 3</option>
-			</select>
-			<form id="chat">
-				<input class="control" id="msg" type="text" placeholder="message">
-				<input type="submit" value="Send">
-			</form>
-			<div id="msgBox"></div>
+		<canvas id="canvas" width="1170" height="680"></canvas>
+		<div class="ui">
+			<div class="closeui">&times;</div>
+			<ul class="userList"></ul>
+			<div id="colorSelector"><div></div></div>
+			<button id="voteToClear">Vote To Clear</button>
+			<div class="controls">
+				<select class="control" id="brush">
+					<option value="line">Line</option>
+					<option value="thinline">Thin Line</option>
+					<option value="dynaline">Dynamic Line</option>
+					<option value="triline">Tri Line</option>
+					<option value="squiggle10">Squiggle ^10</option>
+					<option value="squiggle25">Squiggle ^25</option>
+					<option value="spray">Spray</option>
+					<!-- <option value="test">Test</option> -->
+					<option value="circle">Circle</option>
+					<option value="spraycircle">Circle Spray</option>
+					<option value="scattercircles">Scattered Circles</option>
+					<option value="sketchy">Sketchy</option>
+				</select>
+				<select class="control" id="room">
+					<option value="lobby1">Lobby 1</option>
+					<option value="lobby2">Lobby 2</option>
+					<option value="lobby3">Lobby 3</option>
+				</select>
+				<form id="chat">
+					<input class="control" id="msg" type="text" placeholder="message">
+					<input type="submit" value="Send">
+				</form>
+				<div id="msgBox"></div>
+			</div>
 		</div>
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>

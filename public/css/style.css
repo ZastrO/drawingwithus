@@ -77,6 +77,26 @@ canvas{
 	background: #fff;
 	cursor: url('/images/pencil.cur'), url('/images/pencil.png'), crosshair;
 }
+.ui {
+	position: absolute;
+	left: 0;
+	top: 50px;
+	padding: 15px;
+	border: 1px solid #eee;
+	border-radius: 0 10px 10px 0;
+	background: rgba(255,255,255,.9);
+	box-shadow: 2px 2px 17px -4px rgba(0,0,0,.4);
+}
+.closeui{
+	float: right;
+	color: #ccc;
+	font-size: 24px;
+	line-height: .5;
+	cursor: pointer;
+}
+.closeui:hover{
+	color: #999;
+}
 
 [class^='mouse_'] {
 	position:absolute;
