@@ -228,6 +228,10 @@ var drawNow = false;
 
 socket.emit('init', {id:id, name:name, room:users[id].room, color: id});
 
+$('.openui, .closeui').click(function(){
+	$('.ui, .openui').toggle('slide');
+});
+
 $('#brush').change(function(e){
 	var val = $(e.target).val();
 	console.log('Brush',val);

@@ -77,15 +77,25 @@ canvas{
 	background: #fff;
 	cursor: url('/images/pencil.cur'), url('/images/pencil.png'), crosshair;
 }
-.ui {
+.ui, .openui{
 	position: absolute;
 	left: 0;
 	top: 50px;
-	padding: 15px;
-	border: 1px solid #eee;
-	border-radius: 0 10px 10px 0;
+	box-sizing: content-box;
+	border: 1px solid #BBB;
+	border-left: 0;
 	background: rgba(255,255,255,.9);
-	box-shadow: 2px 2px 17px -4px rgba(0,0,0,.4);
+	border-radius: 0 10px 10px 0;
+}
+.ui {
+	padding: 15px;
+}
+.openui {
+	color: #666;
+	display: none;
+	cursor: pointer;
+	font-size: 25px;
+	padding: 10px;
 }
 .closeui{
 	float: right;
