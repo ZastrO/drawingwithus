@@ -41,7 +41,7 @@ var color = id;
 users[id] = {name:name,brush: 'line', x:0, y:0, lastX:null, lastY:null,room:room, color:id };
 
 $('#colorSelector').ColorPicker({
-	color: '#'+id,
+	color: '#000',
 	onShow: function (colpkr) {
 		$(colpkr).fadeIn(500);
 		return false;
