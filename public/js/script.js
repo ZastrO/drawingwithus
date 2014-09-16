@@ -38,7 +38,7 @@ var lastXY = {x:false,y:false};
 var users = [];
 var color = id;
 
-users[id] = {name:name,brush: 'line', x:0, y:0, lastX:null, lastY:null,room:room, color:id };
+users[id] = {name:name,brush: 'line', x:0, y:0, lastX:null, lastY:null,room:room, color:'000' };
 
 $('#colorSelector').ColorPicker({
 	color: '#000',
