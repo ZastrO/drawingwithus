@@ -226,7 +226,7 @@ function draw(x,y,id,brush){
 var socket = io();
 var drawNow = false;
 
-socket.emit('init', {id:id, name:name, room:users[id].room, color: id});
+socket.emit('init', {id:id, name:name, room:users[id].room, color: "000"});
 
 $('.openui, .closeui').click(function(){
 	$('.ui, .openui').toggle('slide');
