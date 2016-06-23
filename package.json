@@ -7,7 +7,10 @@
     "socket.io": "^1.0.4"
   },
   "description": "0.5.0",
-  "repository": "https://github.com/ZastrO/drawingwithus.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ZastrO/drawingwithus.git"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
