@@ -154,8 +154,10 @@ io.on('connection', function(socket){
 	});
 });
 
-http.listen(8080, function(){
-	console.log('server active | listening on *:8080');
+var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
+http.listen(server_port, server_ip_address, function(){
+	console.log('server active | listening on ' +server_ip_address+ ':' +server_port);
 });
 
 //Initializes new user
