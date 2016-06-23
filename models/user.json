@@ -1,0 +1,14 @@
+{
+	"id": "USER_ID",
+	"username": "User Name",
+	"defaults": {
+		"thickness": 10,
+		"color": "#000000"
+	},
+	"friends":  ["USER_ID", ...],
+	"bookmarks": ["ROOM_ID", ...],
+	"email": "email@email.com",
+	"bio": "lorem ipsum",
+	"myRooms": ["ROOM_ID", ...],
+	"cursor": "cursor.png"
+}

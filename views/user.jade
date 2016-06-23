@@ -1,0 +1,49 @@
+- var title = '| ' + user.username
+- var description = user.bio
+- var keywords = 'drawingwith.us, drawingwithus, collaborative drawing, board, rooms, online group drawing, draw with friends, artisic drawing board'
+- var author = 'David Baer, Zach Standridge'
+
+include inc/header.jade
+div.container
+	h1#username.text-left= user.username
+	div.row
+		div.col-md-4
+			img#avatar.img-responsive(src='/images/avatars/#{user.avatar}')
+			if loggedIn && username == user.username
+				br
+				label.btn.btn-default(for="avatarUpload") Change
+				input#avatarUpload(type="file", name="avatar", style="display:none;")
+			hr.visible-sm.visible-xs
+		div.col-md-8
+			if loggedIn && username == user.username
+				form.form.row
+					div.col-md-6
+						input#email.form-control(type="text", placeholder="email", value=user.email)
+					div.col-md-4
+						input#color.form-control(type="text", placeholder="#000000", value=user.defaults.color)
+					div.col-md-2
+						input#thickness.form-control(type="number", max=4, min=1, placeholder="1", value=user.defaults.thickness)
+					div.col-md-12
+						hr
+						textarea#bio.form-control(name="bio", placeholder="lorem lorem ipsum ipsum... uhh, something something placeholder")= user.bio
+						hr
+					p.col-md-12 My Rooms:
+					each room in user.myRooms
+						div.col-md-3 
+							a(href='/m/#{room}'): img.img-responsive(src="//placehold.it/300x250/")
+			else
+				div.row
+					div#bio.col-md-12= user.bio
+						hr
+					p.col-md-12 Rooms I Moderate:
+					each room in user.myRooms
+						div.col-md-3 
+							a(href='/r/#{room}'): img.img-responsive(src="//placehold.it/300x250/")
+					div.col-md-12
+						hr
+					form#privateMessageForm.form.form-inline.col-md-12
+						label(for="privateMessage")
+						input#privateMessage.form-control(type="text", placeholder="Send me a message!")
+						input.btn.btn-default(type="submit", value="Send")
+	//leave tabbed over
+	include inc/footer.jade 

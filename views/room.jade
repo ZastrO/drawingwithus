@@ -1,0 +1,71 @@
+- var title = '| ' + room.displayName
+- var description = 'Drawingwith.us is a collaborative drawing board that is taking a twist on social media by adding an artistic ingredient into the mix | drawingwithus'
+- var keywords = 'drawingwith.us, drawingwithus, collaborative drawing, board, rooms, online group drawing, draw with friends, artisic drawing board'
+- var author = 'David Baer, Zach Standridge'
+
+include inc/header.jade
+h1.container= room.displayName
+div.text-center
+	canvas#canvas(width=room.size.width, height=room.size.height)
+
+div.open-draw-ui &raquo;
+div.draw-ui
+	div.close-draw-ui &laquo;
+	br
+	br
+	div.row
+		div.col-md-12
+			ul.userList.list-group
+		div.col-md-12
+			hr
+		div.col-md-12
+			div.row
+				div.col-md-6.text-center
+					div#colorSelector: div
+				div.col-md-6.text-center
+					button#voteToClear.btn.btn-sm.btn-danger Vote To Clear&nbsp;
+	//-
+		div.col-md-12
+			hr	
+		div.controls.col-md-12
+			select#brush.control
+				each brush in brushes
+				option(value=brush.val)= brush.name
+			form#chat.form
+				div.input-group
+					input#msg.form-control(type="text", placeholder="message") 
+					span.input-group-btn
+						button.btn.btn-default(type="submit") Send
+			div#msgBox
+
+div.open-chat-ui: span.fa.fa-comments
+div.chat-ui
+	div.close-chat-ui: span.fa.fa-comments
+	br
+	br
+	div.row
+		div.col-md-12
+			ul.list-group
+		div.col-md-12
+			form#chat.form
+				div.input-group
+					input#msg.form-control(type="text", placeholder="message")
+					span.input-group-btn
+						button.btn.btn-default(type="submit") Send
+			div#msgBox
+
+script.
+	roomConfig = {
+		bgColor: "#{room.bgColor}",
+		fadeTime: "#{room.fadeTime}"
+	};
+
+script(src="/socket.io/socket.io.js")
+script(src="http://code.jquery.com/jquery-1.11.1.js")
+script(src="//code.jquery.com/ui/1.11.1/jquery-ui.js")
+script(type="text/javascript", src="/js/colorpicker.js")
+script(src="/js/script.js")
+
+div.container
+	//leave tabbed over
+	include inc/footer.jade 
