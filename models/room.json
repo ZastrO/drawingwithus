@@ -2,7 +2,7 @@
 	"id": "ROOM_ID",
 	"bg_color": "#FFFFFF",
 	"dataURL": "",
-	"roomSize": {"width": 1170, "height": 800},
+	"size": {"width": 1170, "height": 800},
 	"owner": "USER_ID",
 	"accessLevel": "PUBLIC | INVITE_SESSION | VIEW_ONLY | BLACKLIST | WHITELIST",
 	"blacklist": ["USER_ID", ...],
