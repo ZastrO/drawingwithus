@@ -1,6 +1,7 @@
 mongoose = require('mongoose');
 
 //provide a sensible default for local development
+var db_name = "datawithus";
 mongodb_connection_string = 'mongodb://127.0.0.1:27017/' + db_name;
 //take advantage of openshift env vars when available:
 if(process.env.OPENSHIFT_MONGODB_DB_URL){

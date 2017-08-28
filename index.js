@@ -9,7 +9,7 @@ require('./mongo.config.js');
 
 var app = express();
 	app.set('views', __dirname + '/views');
-	app.set('view engine', 'jade');
+	app.set('view engine', 'pug');
 	app.use(express.static(__dirname + '/public'));
 
 	app.use(session({
@@ -95,7 +95,6 @@ var rooms = {
 		bg_color: '#888',
 		fadeTime: "0",
 		users: {}
-
 	},
 	lobby3: {
 		displayName: "Fast and Small Lobby",
