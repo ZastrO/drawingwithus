@@ -66,6 +66,10 @@ app.get('/u/*', function (req, res) {
 	require('./user.route.js')(req, res);
 });
 
+app.post('/u/*', function (req, res) {
+	require('./user.route.js')(req, res);
+});
+
 app.get('/m/*', function (req, res) {
 	require('./moderate.route.js')(req, res);
 });

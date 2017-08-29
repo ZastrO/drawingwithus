@@ -16,7 +16,8 @@ module.exports = function(req, res){
 				console.log('logged in ' + doc.username);
 				req.session.loggedIn = true;
 				req.session.username = doc.username;
-				res.render('user', {user: doc, username: doc.username, loggedIn: true} );
+
+				return res.redirect('/u/'+doc.username);
 			}
 		}
 	});
