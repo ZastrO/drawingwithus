@@ -7,5 +7,34 @@ include inc/header.pug
 div.container
 	h1#username.text-left Create Room
 
+	if loggedIn
+		form.form.row(method="POST")
+			div.row
+				div.col-md-4
+					input#room_id.form-control(name="id", type="text", placeholder="roomID")
+				div.col-md-4
+					input#displayName.form-control(name="displayName", type="text", placeholder="displayName")
+				div.col-md-4
+					select#accessLevel.form-control(name="accessLevel")
+						option(value="PUBLIC") Public
+						option(value="INVITE_SESSION") Invite Session
+						option(value="VIEW_ONLY") View Only
+						option(value="BLACKLIST") Blacklist
+						option(value="WHITELIST") Whitelist
+			br
+			div.row
+				div.col-md-4
+					input#bgColor.form-control(name="bgColor", type="color", value="#ffffff")
+				div.col-md-4
+					input#fadeTime.form-control(name="fadeTime", type="number", min="0", max="0.3", step="0.1", placeholder="fadeTime (ex. 0.1)")
+				div.col-md-4
+					input#width.form-control(name="width", type="number", min="300", max="4000", placeholder="1170")
+			br
+			div.row
+				div.col-md-4
+					input#height.form-control(name="height", type="number", min="300", max="2000", placeholder="800")
+				div.col-md-4
+					button.btn.btn-success(type="submit") Create
+	
 	//leave tabbed over
 	include inc/footer.pug 

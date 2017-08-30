@@ -52,6 +52,13 @@ div.container
 		div.col-md-9
 			canvas#canvas.img-responsive(width=room.size.width, height=room.size.height, style={outline: 'none', 'max-width': '100%'})
 
+script.
+	roomConfig = {
+		bgColor: "#{room.bgColor}",
+		fadeTime: "#{room.fadeTime}",
+		color: "#{defaults.color}"
+	};
+
 script(src="/socket.io/socket.io.js")
 script(src="http://code.jquery.com/jquery-1.11.1.js")
 script(src="//code.jquery.com/ui/1.11.1/jquery-ui.js")

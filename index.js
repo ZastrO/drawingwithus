@@ -64,11 +64,19 @@ app.post('/register/', function (req, res) {
 });
 
 app.get('/create-room/', function (req, res) {
-	require('./create-room.route.js')(req, res);
+	if( res.locals.loggedIn ) {
+		require('./create-room.route.js')(req, res);
+	} else {
+		res.render('error', {code: 'Access Error', msg: 'You need to be logged in to create a room!'});
+	}
 });
 
 app.post('/create-room/', function (req, res) {
-	require('./create-room.route.js')(req, res);
+	if( res.locals.loggedIn ) {
+		require('./create-room.route.js')(req, res);
+	} else {
+		res.render('error', {code: 'Access Error', msg: 'You need to be logged in to create a room!'});
+	}
 });
 
 app.get('/u/*', function (req, res) {
