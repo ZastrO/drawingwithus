@@ -96,36 +96,8 @@ app.get('/r/*', function (req, res) {
 });
 
 
-// PULL FROM MONGO DB
-var rooms = {
-	lobby1: {
-		displayName: "Main Lobby",
-		bg_color: '#fff',
-		dataURL: "",
-		size: {width: 1170, height: 680},
-		owner: "String",
-		accessLevel: 1,
-		blacklist: ["123456", "123455", "123454"],
-		whitelist: ["234567", "234566"],
-		fadeTime: "0",
-		lastModified: "1970-01-01 00:00:01",
-		users: {}
-	},
-	lobby2: {
-		displayName: "Persistent Lobby",
-		size: {width: 1170, height: 680},
-		bg_color: '#888',
-		fadeTime: "0",
-		users: {}
-	},
-	lobby3: {
-		displayName: "Fast and Small Lobby",
-		size: {width: 500, height: 500},
-		bg_color: '#000',
-		fadeTime: "0.5",
-		users: {}
-	}
-};
+// Fills up from db
+app.locals.rooms = {};
 
 
 io.on('connection', function(socket){
@@ -143,8 +115,9 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('canvas',function(data){
-		if( typeof rooms[data.room] !== 'undefined' ){
-			rooms[data.room].dataURL = data.dataURL;
+		if( typeof app.locals.rooms[data.room] !== 'undefined' ){
+			app.locals.rooms[data.room].dataURL = data.dataURL;
+			app.locals.rooms[data.room].save();
 		} else {
 			socket.emit('problems', { type:'404', msg:'Sorry! There doesn\'t seem to be a room here. :(' } );
 		}
@@ -163,12 +136,12 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('disconnect', function() {
-		if( typeof rooms[socket.room] !== 'undefined' ){
+		if( typeof app.locals.rooms[socket.room] !== 'undefined' ){
 			//Removes user from existing structures
 			socket.leave(socket.room);
-			delete rooms[socket.room].users[socket.id];
+			delete app.locals.rooms[socket.room].users[socket.id];
 			//Notifies users in room
-			io.to(socket.room).emit('users', rooms[socket.room].users);
+			io.to(socket.room).emit('users', app.locals.rooms[socket.room].users);
 
 			console.log(socket.id+" has left");
 		}
@@ -184,47 +157,47 @@ http.listen(server_port, server_ip_address, function(){
 //Initializes new user
 function init (socket ,data) {
 	//This will also need to check encapsulation
-	if( typeof rooms[data.room] !== 'undefined' ){
+	if( typeof app.locals.rooms[data.room] !== 'undefined' ){
 
 		//Stores all initial information for user into room/users object
-		rooms[data.room].users[socket.id] = {name: data.name, id: data.id, color:data.color};
+		app.locals.rooms[data.room].users[socket.id] = {name: data.name, id: data.id, color:data.color};
 		
 		socket.join(data.room);
 		socket.room = data.room;
 
 		//Notifies existing users about existence of new user
-		io.to(data.room).emit('users', rooms[data.room].users);
+		io.to(data.room).emit('users', app.locals.rooms[data.room].users);
 		//Gives the new user the current look of the Canvas
-		socket.emit('newRoom',rooms[data.room].dataURL);
+		socket.emit('newRoom',app.locals.rooms[data.room].dataURL);
 
-		//console.log(data.room,rooms[data.room].users);
+		//console.log(data.room,app.locals.rooms[data.room].users);
 	} else {
 		socket.emit('problems', { type:'404', msg:'Sorry! There doesn\'t seem to be a room here. :(' } );
 	}
 }
 
-//Run If a user Switches Rooms
+//Run If a user Switches app.locals.Rooms
 function room(socket, data){
 	//Leave current Room
 	socket.leave(data.roomFrom);
 	//Deletes the users socket.id from users table within old room
-	delete rooms[data.roomFrom].users[socket.id];
+	delete app.locals.rooms[data.roomFrom].users[socket.id];
 	//Adds the users socket.id to users table for new room
-	rooms[data.roomTo].users[socket.id] = {name: data.name, id: data.id};
+	app.locals.rooms[data.roomTo].users[socket.id] = {name: data.name, id: data.id};
 	//Joins room
 	socket.join(data.roomTo);
 
-	//Gives the user swiching rooms the current look of the canvas
-	socket.emit('newRoom',rooms[data.roomTo].dataURL);
+	//Gives the user swiching app.locals.rooms the current look of the canvas
+	socket.emit('newRoom',app.locals.rooms[data.roomTo].dataURL);
 	//Updates other users of the location of user that is switching
-	io.to(data.roomFrom).emit('users', rooms[data.roomFrom].users);
-	io.to(data.roomTo).emit('users', rooms[data.roomTo].users);
+	io.to(data.roomFrom).emit('users', app.locals.rooms[data.roomFrom].users);
+	io.to(data.roomTo).emit('users', app.locals.rooms[data.roomTo].users);
 
 	console.log(data.name+" transfered from <"+data.roomFrom+"> to <"+data.roomTo+">");
-	console.log(data.roomTo, rooms[data.roomTo].users);
+	console.log(data.roomTo, app.locals.rooms[data.roomTo].users);
 }
 
-//Controls the message sending through rooms
+//Controls the message sending through app.locals.rooms
 function chat(data) {
 	//sends message to every user within data.room
 	io.to(data.room).emit('chat',data);
@@ -235,18 +208,18 @@ function chat(data) {
 function colorPicker(socket, data) {
 	//Changes the varaible with Users object
 	//This is important if we want to remove sending the color back to the user when drawing
-	rooms[data.room].users[socket.id].color = data.color;
+	app.locals.rooms[data.room].users[socket.id].color = data.color;
 	//Changes the users color on page
 	io.to(data.room).emit('colorUpdate', data);
 	//Updates what the others user see
 	//Allowing for people to know who is using what color
-	io.to(data.room).emit('users', rooms[data.room].users);
+	io.to(data.room).emit('users', app.locals.rooms[data.room].users);
 }
 
 //Controls the clear board voting system
 function initVote(socket, data) {
 	//User who clicked the button changes his/her status to Y
-	rooms[data.room].users[socket.id].voteToClear = "Y";
+	app.locals.rooms[data.room].users[socket.id].voteToClear = "Y";
 	//Temp Variable used to determine if everyone voted.
 	var bool = true;
 	var total = 0;
@@ -255,8 +228,8 @@ function initVote(socket, data) {
 
 	//loops through all users in users object to see if they have voted
 	//If not the temp variable will change to false
-	for(var key in rooms[data.room].users) {
-		var obj = rooms[data.room].users[key];
+	for(var key in app.locals.rooms[data.room].users) {
+		var obj = app.locals.rooms[data.room].users[key];
 		total++;
 		if(typeof obj.voteToClear == 'undefined' || obj.voteToClear == 'N') {
 			bool = false;
@@ -269,8 +242,8 @@ function initVote(socket, data) {
 	//data will be emited to the room to clear everyones board.
 	if(bool == true) {
 		io.to(data.room).emit('clear', {});
-		for(var key in rooms[data.room].users) {
-			rooms[data.room].users[key].voteToClear = 'N';
+		for(var key in app.locals.rooms[data.room].users) {
+			app.locals.rooms[data.room].users[key].voteToClear = 'N';
 		}
 	}
 	io.to(data.room).emit('newVote', {percent: percent});

@@ -24,6 +24,7 @@ module.exports = function(req, res){
 				res.status(404);
 				res.render('error', {code: 404, msg: 'There is no room with that name!'});
 			} else {
+				req.app.locals.rooms[doc.id] = doc;
 				switch(doc.accessLevel) {
 					case "PUBLIC": 
 						// connection();
