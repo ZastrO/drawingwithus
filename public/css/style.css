@@ -195,3 +195,20 @@ canvas{
     border-bottom: 1px solid #464545;
     border-radius: 4px;
 }
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+}
+.flex img {
+	max-width: 180px;
+}
+.flex.rooms {
+	margin-top: 10px;
+	align-items: stretch;
+}
+.flex.rooms a {
+	display: flex;
+	align-items: center;
+    background: #fff;
+}
