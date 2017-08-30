@@ -25,7 +25,7 @@ var friendSchema = new mongoose.Schema({
 
 var roomSchema = new mongoose.Schema({ 
 	id: String, 
-	bg_color: String, 
+	bgColor: String, 
 	dataURL: String, 
 	size: {
 		width: {type: Number, min: 0}, 
