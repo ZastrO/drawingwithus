@@ -62,7 +62,19 @@ app.post('/register/', function (req, res) {
 	require('./register.route.js')(req, res, transporter);
 });
 
+app.get('/create-room/', function (req, res) {
+	require('./create-room.route.js')(req, res);
+});
+
+app.post('/create-room/', function (req, res) {
+	require('./create-room.route.js')(req, res);
+});
+
 app.get('/u/*', function (req, res) {
+	require('./user.route.js')(req, res);
+});
+
+app.post('/u/*', function (req, res) {
 	require('./user.route.js')(req, res);
 });
 
@@ -73,6 +85,7 @@ app.get('/m/*', function (req, res) {
 app.get('/r/*', function (req, res) {
 	require('./room.route.js')(req, res);
 });
+
 
 // PULL FROM MONGO DB
 var rooms = {

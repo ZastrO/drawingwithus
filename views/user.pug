@@ -11,26 +11,46 @@ div.container
 			img#avatar.img-responsive(src='/images/avatars/#{user.avatar}')
 			if loggedIn && username == user.username
 				br
-				label.btn.btn-default(for="avatarUpload") Change
-				input#avatarUpload(type="file", name="avatar", style="display:none;")
+				label.btn.btn-default(for="avatarUpload") Change Image
+				label.btn.btn-success(for="submitUser", style="margin-left: 10px;") Save
 			hr.visible-sm.visible-xs
 		div.col-md-8
 			if loggedIn && username == user.username
-				form.form.row
+				form.form.row(method="POST", enctype="multipart/form-data")
 					div.col-md-6
-						input#email.form-control(type="text", placeholder="email", value=user.email)
+						input#email.form-control(type="text", value=user.email, disabled="disabled")
 					div.col-md-4
-						input#color.form-control(type="text", placeholder="#000000", value=user.defaults.color)
+						input#color.form-control(name="default_color", type="text", placeholder="#000000", value=user.defaults.color)
 					div.col-md-2
-						input#thickness.form-control(type="number", max=4, min=1, placeholder="1", value=user.defaults.thickness)
+						input#thickness.form-control(name="default_thickness", type="number", max=4, min=1, placeholder="1", value=user.defaults.thickness)
 					div.col-md-12
 						hr
 						textarea#bio.form-control(name="bio", placeholder="lorem lorem ipsum ipsum... uhh, something something placeholder")= user.bio
 						hr
-					p.col-md-12 My Rooms:
-					each room in user.myRooms
-						div.col-md-3 
-							a(href='/m/#{room}'): img.img-responsive(src="//placehold.it/300x250/")
+
+					div.col-md-6
+						h3(style="margin-top: 0px;") Rooms
+					div.col-md-6.text-right
+						a.btn.btn-default(href="/create-room/") Add Rooms
+					div.row
+						div.col-md-12
+							br
+							each room in user.myRooms
+								div.col-md-3 
+									a(href='/m/#{room}'): img.img-responsive(src="//placehold.it/300x250/")
+					br
+					div.col-md-6
+						h3(style="margin-top: 0px;") Friends
+					div.col-md-6.text-right
+						button.btn.btn-default(type="button") Add Friend
+					div.row
+						div.col-md-12
+							br
+							each friend in user.friends
+								div.col-md-3 
+									a(href='/m/#{friend}'): img.img-responsive(src="//placehold.it/300x250/")
+					input#avatarUpload(type="file", name="avatar", style="display:none;")
+					input#submitUser(type="submit", name="submit", style="display:none;")
 			else
 				div.row
 					div#bio.col-md-12= user.bio
