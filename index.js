@@ -135,8 +135,8 @@ io.on('connection', function(socket){
 		if( typeof app.locals.rooms[socket.room] !== 'undefined' ){
 			//Removes user from existing structures
 			socket.leave(socket.room);
-			delete app.locals.rooms[socket.room].users[socket.id];
-			app.locals.rooms[data.room].save();
+			app.locals.rooms[socket.room].users[socket.id] = undefined;
+			app.locals.rooms[socket.room].save();
 			//Notifies users in room
 			io.to(socket.room).emit('users', app.locals.rooms[socket.room].users);
 
@@ -152,7 +152,11 @@ http.listen(server_port, server_ip_address, function(){
 });
 
 //Initializes new user
-function init (socket ,data) {
+function init (socket, data) {
+	if( typeof app.locals.rooms[data.room].users == 'undefined' ){
+		app.locals.rooms[data.room].users = {};
+	}
+
 	//This will also need to check encapsulation
 	if( typeof app.locals.rooms[data.room] !== 'undefined' ){
 
@@ -165,12 +169,10 @@ function init (socket ,data) {
 
 		//Notifies existing users about existence of new user
 		io.to(data.room).emit('users', app.locals.rooms[data.room].users);
-		//Notifies existing users about existence of new user
-		socket.emit('users', app.locals.rooms[data.room].users);
 		//Gives the new user the current look of the Canvas
 		socket.emit('newRoom',app.locals.rooms[data.room].dataURL);
 
-		//console.log(data.room,app.locals.rooms[data.room].users);
+		console.log(data.room,app.locals.rooms[data.room].users);
 	} else {
 		socket.emit('problems', { type:'404', msg:'Sorry! There doesn\'t seem to be a room here. :(' } );
 	}
