@@ -12,24 +12,26 @@ module.exports = function(req, res){
 			if(err){	
 				res.status(500);
 				res.render('error', {code: 500, msg: 'There was an unknown server error. :('});
+			} else {
+				req.session.defaults = {thickness: thickness, color: color};
+				return res.redirect('/u/'+resName);
 			}
 		}); // success
 
 		console.log( res.locals.username, color, thickness, bio, avatar );
-	}
-
-	User.findOne({username:reqName}).exec(function(err, doc){ 
-		if(err){
-			res.status(500);
-			res.render('error', {code: 500, msg: 'There was an error with your request!'});
-		} else {
-			if(doc == null){
-				res.status(404);
-				res.render('error', {code: 404, msg: 'There is no user with that name!'});
+	} else {
+		User.findOne({username:reqName}).exec(function(err, doc){ 
+			if(err){
+				res.status(500);
+				res.render('error', {code: 500, msg: 'There was an error with your request!'});
 			} else {
-				res.render('user', {user: doc} );
+				if(doc == null){
+					res.status(404);
+					res.render('error', {code: 404, msg: 'There is no user with that name!'});
+				} else {
+					res.render('user', {user: doc} );
+				}
 			}
-		}
-	});
-
+		});
+	}
 }

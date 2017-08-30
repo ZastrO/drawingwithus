@@ -58,11 +58,11 @@ div.chat-ui
 script.
 	roomConfig = {
 		bgColor: "#{room.bgColor}",
-		fadeTime: "#{room.fadeTime}"
+		fadeTime: "#{room.fadeTime}",
+		color: "000000"
 	};
 if loggedIn 
-	.
-		roomConfig.color = "#{defaults.color}";
+	script roomConfig.color = "#{defaults.color}";
 
 script(src="/socket.io/socket.io.js")
 script(src="http://code.jquery.com/jquery-1.11.1.js")
