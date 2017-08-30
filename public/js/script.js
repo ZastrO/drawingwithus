@@ -39,7 +39,7 @@ var lastXY = {x:null,y:null};
 var users = [];
 var color = id;
 
-users[id] = {name:name,brush: 'line', x:0, y:0, lastX:null, lastY:null,room:room, color:'000' };
+users[id] = {name:name,brush: 'line', x:0, y:0, lastX:null, lastY:null,room:room, color: roomConfig.color };
 
 $('#colorSelector').ColorPicker({
 	color: roomConfig.color,
@@ -57,7 +57,7 @@ $('#colorSelector').ColorPicker({
 		socket.emit('colorPicker', {id:id, room:users[id].room, color: hex });
 	}
 });
-$('#colorSelector div').css('background', '#000');
+$('#colorSelector div').css('background', '#'+roomConfig.color);
 
 var brushes = {
 	line: function(user,x,y,options){
@@ -92,7 +92,7 @@ function draw(x,y,id,brush){
 var socket = io();
 var drawNow = false;
 
-socket.emit('init', {id:id, name:name, room:users[id].room, color: "000"});
+socket.emit('init', {id:id, name:name, room:users[id].room, color: roomConfig.color});
 
 console.log(socket);
 
