@@ -106,10 +106,6 @@ io.on('connection', function(socket){
 		init(socket, data);
 	});
 	
-	socket.on('room',function(data){
-		room(socket, data);
-	});
-
 	socket.on('chat', function(data){
 		chat(data);
 	});
@@ -140,6 +136,7 @@ io.on('connection', function(socket){
 			//Removes user from existing structures
 			socket.leave(socket.room);
 			delete app.locals.rooms[socket.room].users[socket.id];
+			app.locals.rooms[data.room].save();
 			//Notifies users in room
 			io.to(socket.room).emit('users', app.locals.rooms[socket.room].users);
 
@@ -161,12 +158,15 @@ function init (socket ,data) {
 
 		//Stores all initial information for user into room/users object
 		app.locals.rooms[data.room].users[socket.id] = {name: data.name, id: data.id, color:data.color};
+		app.locals.rooms[data.room].save();
 		
 		socket.join(data.room);
 		socket.room = data.room;
 
 		//Notifies existing users about existence of new user
 		io.to(data.room).emit('users', app.locals.rooms[data.room].users);
+		//Notifies existing users about existence of new user
+		socket.emit('users', app.locals.rooms[data.room].users);
 		//Gives the new user the current look of the Canvas
 		socket.emit('newRoom',app.locals.rooms[data.room].dataURL);
 
@@ -174,27 +174,6 @@ function init (socket ,data) {
 	} else {
 		socket.emit('problems', { type:'404', msg:'Sorry! There doesn\'t seem to be a room here. :(' } );
 	}
-}
-
-//Run If a user Switches app.locals.Rooms
-function room(socket, data){
-	//Leave current Room
-	socket.leave(data.roomFrom);
-	//Deletes the users socket.id from users table within old room
-	delete app.locals.rooms[data.roomFrom].users[socket.id];
-	//Adds the users socket.id to users table for new room
-	app.locals.rooms[data.roomTo].users[socket.id] = {name: data.name, id: data.id};
-	//Joins room
-	socket.join(data.roomTo);
-
-	//Gives the user swiching app.locals.rooms the current look of the canvas
-	socket.emit('newRoom',app.locals.rooms[data.roomTo].dataURL);
-	//Updates other users of the location of user that is switching
-	io.to(data.roomFrom).emit('users', app.locals.rooms[data.roomFrom].users);
-	io.to(data.roomTo).emit('users', app.locals.rooms[data.roomTo].users);
-
-	console.log(data.name+" transfered from <"+data.roomFrom+"> to <"+data.roomTo+">");
-	console.log(data.roomTo, app.locals.rooms[data.roomTo].users);
 }
 
 //Controls the message sending through app.locals.rooms
@@ -209,6 +188,7 @@ function colorPicker(socket, data) {
 	//Changes the varaible with Users object
 	//This is important if we want to remove sending the color back to the user when drawing
 	app.locals.rooms[data.room].users[socket.id].color = data.color;
+	app.locals.rooms[data.room].save();
 	//Changes the users color on page
 	io.to(data.room).emit('colorUpdate', data);
 	//Updates what the others user see
@@ -246,5 +226,7 @@ function initVote(socket, data) {
 			app.locals.rooms[data.room].users[key].voteToClear = 'N';
 		}
 	}
+
+	app.locals.rooms[data.room].save();
 	io.to(data.room).emit('newVote', {percent: percent});
 }

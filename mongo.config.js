@@ -56,6 +56,7 @@ var userSchema = new mongoose.Schema({
 	bio: String,
 	avatar: {type: String, default: 'default/default.png'},
 	myRooms: [String],
+	myFavorites: [String],
 	cursor: {type: String, default: 'cursor.png'}
 });
 
