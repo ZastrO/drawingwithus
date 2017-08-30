@@ -11,8 +11,8 @@ if(process.env.OPENSHIFT_MONGODB_DB_URL){
 mongoose.connect(mongodb_connection_string);
 
 var chatSchema = new mongoose.Schema({
-	from: String,
-	to: String,
+	id: String,
+	name: String,
 	content: String,
 	timestamp: {type: Date, default: Date.now}
 });

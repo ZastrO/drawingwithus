@@ -184,6 +184,8 @@ function init (socket, data) {
 
 //Controls the message sending through app.locals.rooms
 function chat(data) {
+	app.locals.rooms[data.room].chat.push({ id: data.user, name: data.name, content:data.msg });
+	app.locals.rooms[data.room].save();
 	//sends message to every user within data.room
 	io.to(data.room).emit('chat',data);
 	console.log(data.name+" ["+data.msg+"] ");
