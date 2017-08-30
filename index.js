@@ -39,7 +39,10 @@ var app = express();
 	});
 
 var http = require('http').createServer(app);
-var io = require('socket.io')(http);
+var io = require('socket.io')(http, {
+	pingInterval: 5000,
+	pingTimeout: 2000
+});
 
 app.get('/', function (req, res) {
 	res.render('index', { title : 'Home' }  );
@@ -135,7 +138,7 @@ io.on('connection', function(socket){
 		if( typeof app.locals.rooms[socket.room] !== 'undefined' ){
 			//Removes user from existing structures
 			socket.leave(socket.room);
-			app.locals.rooms[socket.room].users[socket.id] = undefined;
+			delete app.locals.rooms[socket.room].users[socket.id];
 			app.locals.rooms[socket.room].save();
 			//Notifies users in room
 			io.to(socket.room).emit('users', app.locals.rooms[socket.room].users);
@@ -153,10 +156,6 @@ http.listen(server_port, server_ip_address, function(){
 
 //Initializes new user
 function init (socket, data) {
-	if( typeof app.locals.rooms[data.room].users == 'undefined' ){
-		app.locals.rooms[data.room].users = {};
-	}
-
 	//This will also need to check encapsulation
 	if( typeof app.locals.rooms[data.room] !== 'undefined' ){
 
@@ -172,7 +171,12 @@ function init (socket, data) {
 		//Gives the new user the current look of the Canvas
 		socket.emit('newRoom',app.locals.rooms[data.room].dataURL);
 
-		console.log(data.room,app.locals.rooms[data.room].users);
+		var k = Object.keys(app.locals.rooms[data.room].users);
+
+		for (var i = k.length - 1; i >= 0; i--) {
+			console.log(k[i], app.locals.rooms[data.room].users[k[i]]);
+		}
+
 	} else {
 		socket.emit('problems', { type:'404', msg:'Sorry! There doesn\'t seem to be a room here. :(' } );
 	}

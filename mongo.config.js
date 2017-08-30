@@ -39,7 +39,7 @@ var roomSchema = new mongoose.Schema({
 	lastModified: {type: Date, default: Date.now}, 
 	displayName: String, 
 	desc: String,
-	users: {type: mongoose.Schema.Types.Mixed},
+	users: {type: mongoose.Schema.Types.Mixed, default: {}},
 	chat: [chatSchema]}
 );
 

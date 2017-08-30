@@ -19,6 +19,7 @@ module.exports = function(req, res){
 				res.status(404);
 				res.render('error', {code: 404, msg: 'There is no room with that name!'});
 			} else {
+				if(typeof req.app.locals.rooms[doc.id] === 'undefined'){ req.app.locals.rooms[doc.id] = doc; }
 				res.render('moderate', {room: doc, accessLevel: accessLevel} );
 			}
 		}
