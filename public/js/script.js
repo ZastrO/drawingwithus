@@ -73,11 +73,7 @@ var brushes = {
 
 function draw(x,y,id,brush){
 	var user = users[id];
-	//var offset = $('#canvas').offset();
-	/*var xOffset = ($('body').width() - canvas.width) / 2;*/
-	//x = (x - offset.left);
-	//y = (y - offset.top);
-	
+
 	context.fillStyle = '#'+users[id].color;
 	context.lineWidth = 1;
 	context.strokeStyle = '#'+users[id].color;
@@ -123,13 +119,21 @@ socket.on('newRoom', function(data){
 });
 
 socket.on('cursor', function(data){
+	var rect = canvas.getBoundingClientRect();
+
 	if( ($('.mouse_'+data.id).length < 1) && (data.room == users[id].room) && (data.id != id) ){
 		users[data.id] = {name:data.name,brush:data.brush, x:data.x, y:data.y, lastX:null, lastY:null, room:data.room, color: data.color };
-		$('body').append($('<div class="mouse mouse_'+data.id+'" data-name="'+data.name+'" style="top:'+(data.y+offset.top)+'px;left:'+(data.x+offset.left)+'px;"><img src="/images/pencil.png" ><div class="message"></div></div>'));
+		$('.pencils').append($('<div class="mouse mouse_'+data.id+'" data-name="'+data.name+'" style="top:'+(data.y+offset.top)+'px;left:'+(data.x+offset.left)+'px;"><img src="/images/pencil.png" ><div class="message"></div></div>'));
 	} else if (data.room == users[id].room) {
-		$('.mouse_'+data.id).css({
+		var x = (data.x * ( rect.right - rect.left ) ) / (canvas.width );
+		var y = (data.y * ( rect.bottom - rect.top ) ) / (canvas.height );
+		/*$('.mouse_'+data.id).css({
 			'top': ((data.y+offset.top)-16)+'px',
 			'left': (data.x+offset.left)+'px'
+		});*/
+		$('.mouse_'+data.id).css({
+			'top': (y-4)+'px',
+			'left': x+'px'
 		});
 	} else if (data.room != users[id].room) {
 		$('.mouse_'+data.id).remove();
@@ -233,21 +237,20 @@ function noDrawFunc(){
 
 	users[id].lastX = null; 
 	users[id].lastY = null;
-
-	
-	
 }
 
 function touchHandler(e){
 	e.preventDefault();
+
+	var rect = canvas.getBoundingClientRect();
 
 	if(e.type == "touchmove") {
 		e.pageX = e.originalEvent.touches[0].pageX;
 		e.pageY = e.originalEvent.touches[0].pageY;
 	}
 
-	var x = (e.pageX - offset.left);
-	var y = (e.pageY - offset.top);
+	var x = Math.round(e.offsetX/(rect.right-rect.left)*canvas.width);
+	var y = Math.round(e.offsetY/(rect.bottom-rect.top)*canvas.height);
 	
 	//console.log("x: "+ x  +" -- y: " + y );
 
@@ -259,13 +262,21 @@ var canvasSnap = setInterval(
 	5000
 );
 if(roomConfig.fadeTime !== 0) {
-	setInterval(function(){
+	/*setInterval(function(){
 		context.save();
-		context.globalAlpha = roomConfig.fadeTime;
+		//context.globalAlpha = 0.08;
+		context.fillStyle = 'rgba(230,230,230,0.05)';
+		context.fillRect( 0, 0, $(canvas).width(), $(canvas).height());
+		context.restore();
+	}, 40);*/
+
+	/*setInterval(function(){
+		context.save();
+		context.globalAlpha = 0.3;
 		context.fillStyle = 'rgb(255,255,255)';
 		context.fillRect( 0, 0, $(canvas).width(), $(canvas).height());
 		context.restore();
-	}, 2000);	
+	}, 30000);*/
 }
 
 
