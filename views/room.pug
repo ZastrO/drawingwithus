@@ -6,7 +6,8 @@
 include inc/header.pug
 h1.container= room.displayName
 div.text-center
-	canvas#canvas(width=room.size.width, height=room.size.height)
+	div.pencils(style="position: relative; display: inline-block;")
+		canvas#canvas(width=room.size.width, height=room.size.height)
 
 div.open-draw-ui &raquo;
 div.draw-ui
