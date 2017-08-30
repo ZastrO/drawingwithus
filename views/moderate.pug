@@ -9,6 +9,8 @@ div.container
 		div.col-md-3
 			div.row
 				h1#roomName= room.displayName
+					a.pull-right(href='/r/'+room.id)
+						i.fa.fa-external-link
 				div#roomDesc: p= room.desc
 				hr
 			form#settings.row.text-left 
@@ -36,19 +38,11 @@ div.container
 				hr
 			div#chat.row
 				label Chat:
-				div.col-md-12.well(style={color:'#333'})
-					div.row.message
-						div.col-md-2 Name: 
-						div.col-md-10  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse, sequi.
-					div.row.message
-						div.col-md-2 Name: 
-						div.col-md-10  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse, sequi.
-					div.row.message
-						div.col-md-2 Name: 
-						div.col-md-10  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse, sequi.
-					div.row.message
-						div.col-md-2 Name: 
-						div.col-md-10  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse, sequi.
+				div.col-md-12.well(style={color:'#fff'})
+					each msg in room.chat
+						div.row.message
+							div.col-md-2= msg.name + ':' 
+							div.col-md-10=  msg.content
 		div.col-md-9
 			canvas#canvas.img-responsive(width=room.size.width, height=room.size.height, style={outline: 'none', 'max-width': '100%'})
 

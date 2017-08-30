@@ -91,7 +91,11 @@ app.post('/u/*', function (req, res) {
 });
 
 app.get('/m/*', function (req, res) {
-	require('./moderate.route.js')(req, res);
+	if( res.locals.loggedIn ) {
+		require('./moderate.route.js')(req, res);
+	} else {
+		res.render('error', {code: 'Access Error', msg: 'You need to be logged in to moderate a room!'});
+	}
 });
 
 app.get('/r/*', function (req, res) {
