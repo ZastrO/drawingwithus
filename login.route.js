@@ -16,6 +16,7 @@ module.exports = function(req, res){
 				console.log('logged in ' + doc.username);
 				req.session.loggedIn = true;
 				req.session.username = doc.username;
+				req.session.defaults = doc.defaults;
 
 				return res.redirect('/u/'+doc.username);
 			}

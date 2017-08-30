@@ -60,6 +60,9 @@ script.
 		bgColor: "#{room.bgColor}",
 		fadeTime: "#{room.fadeTime}"
 	};
+if loggedIn 
+	.
+		roomConfig.color = "#{defaults.color}";
 
 script(src="/socket.io/socket.io.js")
 script(src="http://code.jquery.com/jquery-1.11.1.js")

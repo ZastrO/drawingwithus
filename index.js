@@ -32,6 +32,7 @@ var app = express();
 		res.locals.loggedIn = false;
 		if(typeof req.session.username !== 'undefined') {
 			res.locals.username = req.session.username;
+			res.locals.defaults = req.session.defaults;
 			res.locals.loggedIn = true;
 		}
 		next();
