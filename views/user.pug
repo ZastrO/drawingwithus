@@ -28,40 +28,37 @@ div.container
 						textarea#bio.form-control(name="bio", placeholder="lorem lorem ipsum ipsum... uhh, something something placeholder")= user.bio
 						hr
 
+					input#avatarUpload(type="file", name="avatar", style="display:none;")
+					input#submitUser(type="submit", name="submit", style="display:none;")
+
+				div.row
 					div.col-md-6
 						h3(style="margin-top: 0px;") Rooms
 					div.col-md-6.text-right
 						a.btn.btn-default(href="/create-room/") Add Rooms
-					input#avatarUpload(type="file", name="avatar", style="display:none;")
-					input#submitUser(type="submit", name="submit", style="display:none;")
-
 				div.flex.rooms
 					each room in rooms 
 						a(href='/m/' + room.id): img.img-responsive(src=room.dataURL ? room.dataURL : "//placehold.it/300x250/")
 				br
-				div.col-md-6
-					h3(style="margin-top: 0px;") Friends
-				div.col-md-6.text-right
-					button.btn.btn-default(type="button") Add Friend
 				div.row
-					div.col-md-12
-						br
-						each friend in user.friends
-							div.col-md-3 
-								a(href='/m/' + friend): img.img-responsive(src="//placehold.it/300x250/")
+					div.col-md-6
+						h3(style="margin-top: 0px;") Friends
+					div.col-md-6.text-right
+						button.btn.btn-default(type="button") Add Friend
+				div.flex.rooms
+					each friend in user.friends 
+						a(href='/u/' + friend): img.img-responsive(src="//placehold.it/300x250/")
 			else
 				div.row
-					div#bio.col-md-12= user.bio
-						hr
-					p.col-md-12 Rooms I Moderate:
-					each room in user.myRooms
-						div.col-md-3 
-							a(href='/r/#{room}'): img.img-responsive(src="//placehold.it/300x250/")
-					div.col-md-12
-						hr
-					form#privateMessageForm.form.form-inline.col-md-12
-						label(for="privateMessage")
-						input#privateMessage.form-control(type="text", placeholder="Send me a message!")
-						input.btn.btn-default(type="submit", value="Send")
+					div.col-md-6
+						h3(style="margin-top: 0px;") Rooms
+				div.flex.rooms
+					each room in rooms 
+						a(href='/r/' + room.id): img.img-responsive(src=room.dataURL ? room.dataURL : "//placehold.it/300x250/")
+				br
+				form#privateMessageForm.form.form-inline.col-md-12
+					label(for="privateMessage")
+					input#privateMessage.form-control(type="text", placeholder="Send me a message!")
+					input.btn.btn-default(type="submit", value="Send")
 	//leave tabbed over
 	include inc/footer.pug 
