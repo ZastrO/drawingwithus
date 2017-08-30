@@ -16,7 +16,7 @@ div.container
 			hr.visible-sm.visible-xs
 		div.col-md-8
 			if loggedIn && username == user.username
-				form.form.row(method="POST", enctype="multipart/form-data")
+				form.form.row(method="POST")
 					div.col-md-6
 						input#email.form-control(type="text", value=user.email, disabled="disabled")
 					div.col-md-4
@@ -37,7 +37,7 @@ div.container
 							br
 							each room in user.myRooms
 								div.col-md-3 
-									a(href='/m/#{room}'): img.img-responsive(src="//placehold.it/300x250/")
+									a(href='/m/' + room): img.img-responsive(src="//placehold.it/300x250/")
 					br
 					div.col-md-6
 						h3(style="margin-top: 0px;") Friends
@@ -48,7 +48,7 @@ div.container
 							br
 							each friend in user.friends
 								div.col-md-3 
-									a(href='/m/#{friend}'): img.img-responsive(src="//placehold.it/300x250/")
+									a(href='/m/' + friend): img.img-responsive(src="//placehold.it/300x250/")
 					input#avatarUpload(type="file", name="avatar", style="display:none;")
 					input#submitUser(type="submit", name="submit", style="display:none;")
 			else

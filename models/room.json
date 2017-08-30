@@ -1,6 +1,6 @@
 {
 	"id": "ROOM_ID",
-	"bg_color": "#FFFFFF",
+	"bgColor": "#FFFFFF",
 	"dataURL": "",
 	"size": {"width": 1170, "height": 800},
 	"owner": "USER_ID",
