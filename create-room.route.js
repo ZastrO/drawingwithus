@@ -10,6 +10,8 @@ module.exports = function(req, res){
 			width 		= req.body.width,
 			height 		= req.body.height;
 
+		console.log( req.body );
+
 		Room.findOne({id:id}).exec(function(err, doc){ 
 			if(doc){
 				res.status(226);

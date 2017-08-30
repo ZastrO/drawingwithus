@@ -15,7 +15,7 @@
 		{
 			"id": "MESSAGE_ID",
 			"from": "USER_ID",
-			"to": "USER_ID | NULL"
+			"to": "USER_ID | NULL",
 			"content": "message",
 			"timestamp":  "1970-01-01 00:00:01"
 		}, ...

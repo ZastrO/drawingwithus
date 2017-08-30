@@ -17,7 +17,6 @@ module.exports = function(req, res){
 				return res.redirect('/u/'+resName);
 			}
 		}); // success
-
 		console.log( res.locals.username, color, thickness, bio, avatar );
 	} else {
 		User.findOne({username:reqName}).exec(function(err, doc){ 
@@ -29,7 +28,14 @@ module.exports = function(req, res){
 					res.status(404);
 					res.render('error', {code: 404, msg: 'There is no user with that name!'});
 				} else {
-					res.render('user', {user: doc} );
+					var rooms = [];	
+					Room.find({id: doc.myRooms}).exec(function(err, rDocs){
+						if(rDocs) {
+							res.render('user', {user: doc, rooms: rDocs} );	
+						} else {
+							res.render('user', {user: doc} );
+						}
+					});
 				}
 			}
 		});
