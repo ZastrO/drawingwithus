@@ -139,16 +139,10 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('disconnect', function() {
-		if( typeof app.locals.rooms[socket.room] !== 'undefined' ){
-			//Removes user from existing structures
-			socket.leave(socket.room);
-			delete app.locals.rooms[socket.room].users[socket.id];
-			app.locals.rooms[socket.room].save();
-			//Notifies users in room
-			io.to(socket.room).emit('users', app.locals.rooms[socket.room].users);
-
-			console.log(socket.id+" has left");
-		}
+		exit(socket);
+	});
+	socket.on('exit', function() {
+		exit(socket);
 	});
 });
 
@@ -163,6 +157,12 @@ function init (socket, data) {
 	//This will also need to check encapsulation
 	if( typeof app.locals.rooms[data.room] !== 'undefined' ){
 
+		var k = Object.keys(app.locals.rooms[data.room].users);
+
+		for (var i = k.length - 1; i >= 0; i--) {
+			if(data.id == app.locals.rooms[data.room].users[k[i]].id) { delete app.locals.rooms[data.room].users[k[i]]; }
+		}
+
 		//Stores all initial information for user into room/users object
 		app.locals.rooms[data.room].users[socket.id] = {name: data.name, id: data.id, color:data.color};
 		app.locals.rooms[data.room].save();
@@ -175,14 +175,27 @@ function init (socket, data) {
 		//Gives the new user the current look of the Canvas
 		socket.emit('newRoom',app.locals.rooms[data.room].dataURL);
 
-		var k = Object.keys(app.locals.rooms[data.room].users);
-
-		for (var i = k.length - 1; i >= 0; i--) {
-			console.log(k[i], app.locals.rooms[data.room].users[k[i]]);
-		}
-
 	} else {
 		socket.emit('problems', { type:'404', msg:'Sorry! There doesn\'t seem to be a room here. :(' } );
+	}
+}
+
+//Removes socket from user list in room and resends updated room
+function exit(socket) {
+	if( typeof app.locals.rooms[socket.room] !== 'undefined' ){
+		//Removes user from existing structures
+		socket.leave(socket.room);
+		delete app.locals.rooms[socket.room].users[socket.id];
+		app.locals.rooms[socket.room].save();
+		//Notifies users in room
+		io.to(socket.room).emit('users', app.locals.rooms[socket.room].users);
+
+		var peopleCount =  Object.keys(app.locals.rooms[socket.room].users).length;
+
+		if( peopleCount == 0 ){
+			delete app.locals.rooms[socket.room];
+			console.log('Everyone has left ' + socket.room + '. Room cleared from cache.');
+		}
 	}
 }
 
