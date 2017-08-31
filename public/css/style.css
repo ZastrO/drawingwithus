@@ -48,6 +48,7 @@ input.form-control, textarea.form-control {
 	border-radius: 0;
 	border-left: 4px solid #08d;
 	color: #fff;
+	padding-right: 0;
 	max-width: 100%;
 	animation: gradShift 900s;
 	-webkit-animation: gradShift 900s;
