@@ -8,6 +8,8 @@ h1.container= room.displayName
 div.text-center
 	div.pencils(style="position: relative; display: inline-block;")
 		canvas#canvas(width=room.size.width, height=room.size.height)
+div.container
+	p= room.desc
 
 div.open-draw-ui &raquo;
 div.draw-ui
@@ -25,6 +27,32 @@ div.draw-ui
 					div#colorSelector: div
 				div.col-md-6.text-center
 					button#voteToClear.btn.btn-sm.btn-danger Vote To Clear&nbsp;
+		if owner
+			div.col-md-12
+				hr
+			div.col-md-12
+				form#settings 
+					div.form-group
+						label(for="accessLevel") Access Level
+						select#accessLevel.form-control(style="color: #444;")
+							each option in accessLevel
+								//- var select=null; if (room.accessLevel == option.val) select='selected';
+								option(value=option.val, selected=room.accessLevel == option.val)= option.name
+					div.form-group
+						label(for="bgColor") Background Color
+						input#bgColor.form-control(type="text", value=room.bgColor)
+					div.form-group
+						label(for="fadeTime") Fade Time
+						input#fadeTime.form-control(type="number", value=room.fadeTime)
+					div.flex(style="align-items:center;")
+						div(style="padding-right:1em;")
+							label(for="width") Width
+						div(style="padding-right:1em;")
+							input#width.form-control(type="number", value=room.size.width)
+						div(style="padding-right:1em;")
+							label(for="height") Height
+						div
+							input#height.form-control(type="number", value=room.size.height)
 	//-
 		div.col-md-12
 			hr	

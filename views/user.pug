@@ -20,7 +20,7 @@ div.container
 					div.col-md-6
 						input#email.form-control(type="text", value=user.email, disabled="disabled")
 					div.col-md-4
-						input#color.form-control(name="default_color", type="text", placeholder="#000000", value=user.defaults.color)
+						input#color.form-control(name="default_color", type="text", placeholder="000000", value=user.defaults.color)
 					div.col-md-2
 						input#thickness.form-control(name="default_thickness", type="number", max=4, min=1, placeholder="1", value=user.defaults.thickness)
 					div.col-md-12
@@ -38,7 +38,7 @@ div.container
 						a.btn.btn-default(href="/create-room/") Add Rooms
 				div.flex.rooms
 					each room in rooms 
-						a(href='/m/' + room.id): img.img-responsive(src=room.dataURL ? room.dataURL : "//placehold.it/300x250/")
+						a(href='/r/' + room.id): img.img-responsive(src=room.dataURL ? room.dataURL : "//placehold.it/300x250/")
 				br
 				div.row
 					div.col-md-6
@@ -49,6 +49,9 @@ div.container
 					each friend in user.friends 
 						a(href='/u/' + friend): img.img-responsive(src="//placehold.it/300x250/")
 			else
+				div.row
+					div.col-md-6
+						p= user.bio
 				div.row
 					div.col-md-6
 						h3(style="margin-top: 0px;") Rooms

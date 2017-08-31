@@ -43,7 +43,7 @@ module.exports = function(req, res){
 										res.status(500);
 										res.render('error', {code: 500, msg: 'There was an unknown server error. :('});
 									} else {
-										return res.redirect('/m/'+id);
+										return res.redirect('/r/'+id);
 									}
 								});
 							} 
