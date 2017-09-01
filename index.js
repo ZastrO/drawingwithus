@@ -126,8 +126,11 @@ io.on('connection', function(socket){
 		}
 	});
 
-	socket.on('coordinates', function(data){	
-		io.to(data.room).emit('cursor',data);
+	socket.on('coordinates', function(data) {
+		app.locals.rooms[socket.room].users[socket.id].lastX = data.x;
+		app.locals.rooms[socket.room].users[socket.id].lastY = data.y;
+
+		io.to(data.room).emit('cursor', data);
 	});
 
 	socket.on('colorPicker', function(data) {
@@ -156,22 +159,28 @@ http.listen(server_port, server_ip_address, function(){
 function init (socket, data) {
 	//This will also need to check encapsulation
 	if( typeof app.locals.rooms[data.room] !== 'undefined' ){
+		if( typeof app.locals.rooms[data.room].usersInk === 'undefined' ){ app.locals.rooms[data.room].usersInk = {}; }
 
 		var k = Object.keys(app.locals.rooms[data.room].users);
 
 		for (var i = k.length - 1; i >= 0; i--) {
-			if(data.id == app.locals.rooms[data.room].users[k[i]].id) { delete app.locals.rooms[data.room].users[k[i]]; }
+			if(data.id == app.locals.rooms[data.room].users[k[i]].id) { 
+				delete app.locals.rooms[data.room].users[k[i]];
+				delete app.locals.rooms[data.room].usersInk[k[i]]; 
+			}
 		}
 
 		//Stores all initial information for user into room/users object
 		app.locals.rooms[data.room].users[socket.id] = {name: data.name, id: data.id, color:data.color};
+		app.locals.rooms[data.room].usersInk[socket.id] = 100;
 		app.locals.rooms[data.room].save();
 		
 		socket.join(data.room);
 		socket.room = data.room;
 
 		//Notifies existing users about existence of new user
-		io.to(data.room).emit('users', app.locals.rooms[data.room].users);
+		const roomSafeUsers = Object.keys(app.locals.rooms[data.room].users).map(key => app.locals.rooms[data.room].users[key]);
+		io.to(data.room).emit('users', roomSafeUsers);
 		//Gives the new user the current look of the Canvas
 		socket.emit('newRoom',app.locals.rooms[data.room].dataURL);
 
@@ -186,6 +195,7 @@ function exit(socket) {
 		//Removes user from existing structures
 		socket.leave(socket.room);
 		delete app.locals.rooms[socket.room].users[socket.id];
+		delete app.locals.rooms[socket.room].usersInk[socket.id];
 		app.locals.rooms[socket.room].save();
 		//Notifies users in room
 		io.to(socket.room).emit('users', app.locals.rooms[socket.room].users);
