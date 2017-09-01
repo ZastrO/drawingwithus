@@ -234,9 +234,6 @@ function drawNowFunc(){
 function noDrawFunc(){
 	drawNow = false; 
 	socket.emit('coordinates', {id:id,name:name,drawNow:drawNow});
-
-	users[id].lastX = null; 
-	users[id].lastY = null;
 }
 
 function touchHandler(e){
