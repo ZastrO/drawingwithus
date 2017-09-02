@@ -52,12 +52,12 @@ $('#colorSelector').ColorPicker({
 		return false;
 	},
 	onChange: function (hsb, hex, rgb) {
-		$('#colorSelector div').css('backgroundColor', '#' + hex);
+		$('#colorSelector div').css('background', 'linear-gradient(#'+hex+' 0, #'+hex+' 100%) no-repeat center left');
 		color = users[id].color = hex;
 		socket.emit('colorPicker', {id:id, room:users[id].room, color: hex });
 	}
 });
-$('#colorSelector div').css('background', '#'+roomConfig.color);
+$('#colorSelector div').css('background', 'linear-gradient(#'+roomConfig.color+' 0, #'+roomConfig.color+' 100%) no-repeat center left');
 
 var brushes = {
 	line: function(user,x,y,options){
@@ -168,6 +168,9 @@ socket.on('users', function(data) {
 });
 socket.on('colorUpdate', function(data) {
 	users[data.id].color = data.color;
+});
+socket.on('ink', function(data) {
+	$('#colorSelector div').css('backgroundPosition', ((1 - data.level/data.cap) * -100) + 'px 0px');
 });
 
 socket.on('newVote', function(data) {

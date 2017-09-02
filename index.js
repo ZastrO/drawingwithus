@@ -127,6 +127,21 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('coordinates', function(data) {
+		if(typeof app.locals.rooms[socket.room] === 'undefined') { return; }
+
+		var ut = app.locals.rooms[socket.room].users[socket.id];
+
+		app.locals.rooms[socket.room].usersInk[socket.id].drawNow = data.drawNow;
+		if( data.drawNow && ut.lastX && ut.lastY ) {
+			if(app.locals.rooms[socket.room].usersInk[socket.id].level > 0 ) { 
+				app.locals.rooms[socket.room].usersInk[socket.id].deplete( data.x-ut.lastX, data.y-ut.lastY ); 
+			}
+
+			if( app.locals.rooms[socket.room].usersInk[socket.id].level <= 0 ){
+				data.drawNow = false; 
+			}
+		}
+
 		app.locals.rooms[socket.room].users[socket.id].lastX = data.x;
 		app.locals.rooms[socket.room].users[socket.id].lastY = data.y;
 
@@ -172,7 +187,7 @@ function init (socket, data) {
 
 		//Stores all initial information for user into room/users object
 		app.locals.rooms[data.room].users[socket.id] = {name: data.name, id: data.id, color:data.color};
-		app.locals.rooms[data.room].usersInk[socket.id] = 100;
+		app.locals.rooms[data.room].usersInk[socket.id] = new InkWell(2000, socket);
 		app.locals.rooms[data.room].save();
 		
 		socket.join(data.room);
@@ -191,7 +206,7 @@ function init (socket, data) {
 
 //Removes socket from user list in room and resends updated room
 function exit(socket) {
-	if( typeof app.locals.rooms[socket.room] !== 'undefined' ){
+	if( typeof app.locals.rooms[socket.room] !== 'undefined' && typeof app.locals.rooms[socket.room].users[socket.id] !== 'undefined' ){
 		//Removes user from existing structures
 		socket.leave(socket.room);
 		delete app.locals.rooms[socket.room].users[socket.id];
@@ -264,4 +279,20 @@ function initVote(socket, data) {
 
 	app.locals.rooms[data.room].save();
 	io.to(data.room).emit('newVote', {percent: percent});
+}
+
+function InkWell(levelCap, socket){
+	this.levelCap = levelCap;
+	this.level = levelCap;
+	this.socket = socket;
+	this.drawNow = false;
+
+	this.ivl = setInterval(() => {
+		if( this.level < this.levelCap && !this.drawNow ) {this.level += 100;}
+		if( this.level > this.levelCap ) {this.level = levelCap;}
+		this.socket.emit('ink', {level: this.level, cap: this.levelCap});
+	}, 200);
+
+	this.deplete = (xval, yval) => { this.level -= Math.hypot(xval, yval) };
+	this.destroy = () => { clearInterval(this.ivl) };
 }
