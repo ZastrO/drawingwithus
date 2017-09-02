@@ -119,7 +119,7 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('coordinates', function(data) {
-		if(typeof app.locals.rooms[socket.room] === 'undefined') { return; }
+		if(typeof app.locals.rooms[socket.room] === 'undefined' || typeof app.locals.rooms[socket.room].usersInk === 'undefined') { return; }
 
 		var ut = app.locals.rooms[socket.room].users[socket.id];
 
