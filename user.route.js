@@ -1,8 +1,10 @@
 module.exports = function(req, res){
 	var reqName = req.url.split('/')[2];
 	var resName = res.locals.username;
+	var resLogin = res.locals.loggedIn;
 
-	if( Object.keys(req.body).length !== 0  ) {
+
+	if( Object.keys(req.body).length !== 0 && (resName == reqName) && typeof resLogin !== 'undefined' ) {
 		var color 	  = req.body.default_color,
 			thickness = req.body.default_thickness,
 			bio		  = req.body.bio,
