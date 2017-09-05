@@ -245,8 +245,9 @@ function touchHandler(e){
 	var rect = canvas.getBoundingClientRect();
 
 	if(e.type == "touchmove") {
-		e.pageX = e.originalEvent.touches[0].pageX;
-		e.pageY = e.originalEvent.touches[0].pageY;
+		var targetRect = e.originalEvent.touches[0].target.getBoundingClientRect();
+		e.offsetX = e.originalEvent.touches[0].pageX - targetRect.left;
+		e.offsetY = e.originalEvent.touches[0].pageY - targetRect.top;
 	}
 
 	var x = Math.round(e.offsetX/(rect.right-rect.left)*canvas.width);
