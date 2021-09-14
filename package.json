@@ -1,0 +1,26 @@
+{
+  "name": "drawingwith.us",
+  "version": "0.0.0",
+  "dependencies": {
+    "body-parser": "^1.10.2",
+    "chalk": "^4.1.0",
+    "express": "^4.15.4",
+    "express-session": "^1.10.0",
+    "mongodb": "^1.4.6",
+    "mongoose": "^4.0.1",
+    "nodemailer": "^2.2.2",
+    "pug": "^2.0.0-rc.3",
+    "socket.io": "^1.0.4"
+  },
+  "description": "0.5.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ZastrO/drawingwithus.git"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Zastr0",
+  "license": "ISC"
+}

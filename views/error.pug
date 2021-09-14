@@ -1,0 +1,28 @@
+extends layouts/app
+
+block metadefs
+	- var title = '| ' + code
+	- var description = msg
+	- var keywords = 'drawingwith.us, drawingwithus, collaborative drawing, board, rooms, online group drawing, draw with friends, artisic drawing board'
+
+block content
+	div.container
+		h1#error.text-center!= code + '&nbsp;&nbsp;&nbsp;'
+		div.row
+			div.col-md-12
+				p.text-center= msg
+
+	link(href='http://fonts.googleapis.com/css?family=Exo:900', rel='stylesheet', type='text/css')
+	style.
+		#error{
+			font-family: Exo;
+			font-size: 248px;
+			text-shadow:	15px 0px #ccc,
+							30px 0px #aac,
+							45px 0px #8a8,
+							60px 0px #877,
+							75px 0px #667,
+							90px 0px #464,
+							105px 0px #433,
+							120px 0px #282838;
+		}

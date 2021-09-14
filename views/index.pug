@@ -1,0 +1,30 @@
+extends layouts/app
+
+block metadefs
+	- var title = '| Home'
+	- var description = 'Drawingwith.us is a collaborative drawing board that is taking a twist on social media by adding an artistic ingredient into the mix | Drawing With Us'
+	- var keywords = 'drawingwith.us, drawingwithus, collaborative drawing, board, rooms, online group drawing, draw with friends, artisic drawing board, draw with us'
+
+block content
+	div.jumbotron
+		div.container
+			h1 Welcome to drawingwith.us
+			p This is an only collaborative drawing board website that will allow users to create accounts, request friends, build boards, and much more! We are currently in development, but please take a look at the bottom three boards we have and have fun! 
+			p: a.btn.btn-primary.btn-lg(href="/r/lobby1", role="button") Start Drawing! &raquo;
+
+	div.container
+		div.row
+			div.col-md-4
+				h2 Lobby 1
+				p Our goal is to launch a website that allows users to interact with their friends while drawing. Additional functionality will be added such as: creating accounts, creating private rooms, premium membership, and custom cursors. 
+				p: a.btn.btn-default(href="/r/lobby1", role="button") View lobby1 &raquo;
+
+			div.col-md-4
+				h2 Lobby 2
+				p Drawingwith.us will be created using the most uptodate languages and frameworks. We are currently using Node.js, express, socket.io and twitter bootstrap  
+				p: a.btn.btn-default(href="/r/lobby2", role="button") View lobby2 &raquo;
+
+			div.col-md-4
+				h2 Lobby 3
+				p We are currently in development and don't have a end date, but we insure you that we are working hard day and night to smooth out the fine details. 
+				p: a.btn.btn-default(href="/r/lobby3", role="button") View lobby3 &raquo;
