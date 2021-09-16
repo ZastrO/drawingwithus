@@ -47,7 +47,7 @@ script.
 	context.lineCap = 'round';
 
 	var lastXY = {x:null,y:null};
-	var users = [];
+	var users = {};
 	var color = id;
 
 	users[id] = {
@@ -191,6 +191,9 @@ script.
 	});
 
 	socket.on('users', function(data) {
+		users = {};
+		$('.pencils .mouse').remove();
+		data.forEach(user => users[user.id] = user);
 		$('.userList').empty();
 		$.each(data, function() {
 			$('.userList').append(`
@@ -199,18 +202,6 @@ script.
 				</li>`
 			);
 		});
-		/*$('.mouse').each( function(data){
-			var isHere = false;
-			var mouseId = $(this).attr('class').split('_')[1];
-			for (var i = data.length - 1; i >= 0; i--) {
-				if( data[i].user == mouseId ){
-					isHere = true;
-				}
-			};
-			if(!isHere){
-				$('.mouse_'+mouseId).remove();
-			}
-		}(data));*/
 	});
 	socket.on('colorUpdate', function(data) {
 		users[data.id].color = data.color;
@@ -322,7 +313,7 @@ script.
 		socket.emit('coordinates', {
 			id:id,
 			name:name,
-			brush:users[id].brush,
+			brush:users[id].brush || 'line',
 			drawNow:drawNow,
 			x:x,y:y, 
 			color:users[id].color
@@ -332,15 +323,6 @@ script.
 		}
 	}
 
-	//- var canvasSnap = setInterval(
-	//- 	function(){ 
-	//- 		socket.emit('canvas', {
-	//- 			room:users[id].room, 
-	//- 			dataURL:canvas.toDataURL()
-	//- 		});
-	//- 	},
-	//- 	5000
-	//- );
 	if(roomConfig.fadeTime !== 0) {
 		setInterval(function(){
 			let imgData = context.getImageData(0,0, canvas.width, canvas.height);

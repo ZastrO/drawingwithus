@@ -46,53 +46,55 @@ var io = require('socket.io')(http, {
 	pingTimeout: 2000
 });
 
-// var chalk = require('chalk');
-// var readline = require('readline').createInterface({
-// 	input: process.stdin,
-// 	output: process.stdout
-// });
+if( process.env.STATE == 'local' ){
+	var chalk = require('chalk');
+	var readline = require('readline').createInterface({
+		input: process.stdin,
+		output: process.stdout
+	});
 
-// function getInput(){
-// 	readline.question(`[${chalk.cyan('Accepting Input')}]\n`, cmd => {
-// 		let [command, args] = cmd.replace(' ', '--==--').split('--==--');
-// 		if( command in cmds ){
-// 			cmds[command](args);
-// 		} else {
-// 			console.log(`No command "${chalk.cyan(command)}" exists.`);
-// 		}
-// 		getInput();
-// 	});
-// }
+	function getInput(){
+		readline.question(`[${chalk.cyan('Accepting Input')}]\n`, cmd => {
+			let [command, args] = cmd.replace(' ', '--==--').split('--==--');
+			if( command in cmds ){
+				cmds[command](args);
+			} else {
+				console.log(`No command "${chalk.cyan(command)}" exists.`);
+			}
+			getInput();
+		});
+	}
 
-// var cmds = {
-// 	'@': (input) => {
-// 		let [room, msg] = input.replace(' ', '--==--').split('--==--');
-// 		if( room.toLowerCase() == 'all' ){
-// 			io.emit('chat', {name: 'SYSTEM', msg: msg});
-// 		} else {
-// 			io.to(room).emit('chat', {name: 'SYSTEM', msg: msg});
-// 		}
-// 	},
-// 	'r/': (input) => {
-// 		let [room, command] = input.replace(' ', '--==--').split('--==--');
-// 		switch( command ){
-// 			case 'clear':
-// 				io.to(room).emit('clear', {});
-// 				console.log(`Cleared r/${chalk.red(room)}'s canvas.`);
-// 				break;
-// 			case 'users':
-// 				console.log(`Users in r/${chalk.red(room)}:`);
-// 				console.log(app.locals.rooms[room].users);
-// 				break;
-// 			default:
-// 				console.log(`Showing r/${chalk.red(room)}:`);
-// 				console.log(app.locals.rooms[room]);
-// 				break;
-// 		}
-// 	}
-// };
+	var cmds = {
+		'@': (input) => {
+			let [room, msg] = input.replace(' ', '--==--').split('--==--');
+			if( room.toLowerCase() == 'all' ){
+				io.emit('chat', {name: 'SYSTEM', msg: msg});
+			} else {
+				io.to(room).emit('chat', {name: 'SYSTEM', msg: msg});
+			}
+		},
+		'r/': (input) => {
+			let [room, command] = input.replace(' ', '--==--').split('--==--');
+			switch( command ){
+				case 'clear':
+					io.to(room).emit('clear', {});
+					console.log(`Cleared r/${chalk.red(room)}'s canvas.`);
+					break;
+				case 'users':
+					console.log(`Users in r/${chalk.red(room)}:`);
+					console.log(app.locals.rooms[room].users);
+					break;
+				default:
+					console.log(`Showing r/${chalk.red(room)}:`);
+					console.log(app.locals.rooms[room]);
+					break;
+			}
+		}
+	};
+}
 
-// getInput();
+getInput();
 
 app.get('/', function (req, res) {
 	res.render('index', { title : 'Home' }  );
@@ -179,7 +181,7 @@ io.on('connection', function(socket){
 			socket.ink = room.usersInk[socket.id];
 
 			//Notifies existing users about existence of new user
-			const roomSafeUsers = Object.keys(room.users).map(key => room.users[key]);
+			const roomSafeUsers = Object.values(room.users);
 			io.to(data.room).emit('users', roomSafeUsers);
 			//Gives the new user the current look of the Canvas
 			socket.emit('newRoom',room.strokeBuffer);
@@ -197,15 +199,6 @@ io.on('connection', function(socket){
 		io.to(socket.roomID).emit('chat',data);
 		console.log(`[r/${chalk.red(socket.roomID)}] <${chalk.green(socket.user.name)}> ${data.msg}`);
 	});
-
-	// socket.on('canvas',function(data){
-	// 	if( typeof socket.room !== 'undefined' ){
-	// 		socket.room.dataURL = data.dataURL;
-	// 		socket.room.save();
-	// 	} else {
-	// 		socket.emit('problems', { type:'404', msg:'Sorry! There doesn\'t seem to be a room here. :(' } );
-	// 	}
-	// });
 
 	socket.on('coordinates', function(data) {
 		if(typeof socket.room === 'undefined' || 
@@ -289,29 +282,32 @@ io.on('connection', function(socket){
 	});
 	
 	//Removes socket from user list in room and resends updated room
-	socket.on('exit', function() {
-		let room = app.locals.rooms[socket.roomID];
-		if( typeof room !== 'undefined' && typeof room.users[socket.id] !== 'undefined' ){
-			//Removes user from existing structures
-			socket.leave(socket.room);
-			delete room.users[socket.id];
-			delete room.usersInk[socket.id];
-			room.strokeBuffer = [];
-			room.save();
-			//Notifies users in room
-			io.to(socket.roomID).emit('users', room.users);
-
-			var peopleCount =  Object.keys(room.users).length;
-
-			if( peopleCount == 0 ){
-				delete app.locals.rooms[socket.roomID];
-				console.log('Everyone has left ' + socket.roomID + '. Room cleared from cache.');
-			}
-		}
-	});
+	socket.on('exit', userDropped.bind(socket));
+	socket.on('disconnect', userDropped.bind(socket));
 });
 
-var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+function userDropped(){
+	let room = app.locals.rooms[this.roomID];
+	if( typeof room !== 'undefined' && typeof room.users[this.id] !== 'undefined' ){
+		//Removes user from existing structures
+		this.leave(this.room);
+		delete room.users[this.id];
+		delete room.usersInk[this.id];
+		room.strokeBuffer = [];
+		room.save();
+		//Notifies users in room
+		io.to(this.roomID).emit('users', Object.values(room.users));
+
+		var peopleCount =  Object.keys(room.users).length;
+
+		if( peopleCount == 0 ){
+			delete app.locals.rooms[this.roomID];
+			console.log('Everyone has left ' + this.roomID + '. Room cleared from cache.');
+		}
+	}
+}
+
+var server_port = 8080;
 //var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
 http.listen(server_port, function(){
 	console.log('server active | listening on ' + ':' +server_port);
