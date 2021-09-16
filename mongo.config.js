@@ -1,17 +1,8 @@
 mongoose = require('mongoose');
 
-//provide a sensible default for local development
-var db_name = "datawithus";
-mongodb_connection_string = 'mongodb://localhost:27017/' + db_name;
-//take advantage of openshift env vars when available:
-if(process.env.OPENSHIFT_MONGODB_DB_URL){
-  mongodb_connection_string = process.env.OPENSHIFT_MONGODB_DB_URL + db_name;
-}
-
-mongoose.connect(mongodb_connection_string);
+mongoose.connect( process.env.DATABASE );
 
 var chatSchema = new mongoose.Schema({
-	id: String,
 	name: String,
 	content: String,
 	timestamp: {type: Date, default: Date.now}
@@ -22,11 +13,20 @@ var friendSchema = new mongoose.Schema({
 	status: String
 });
 
+var strokePointSchema = new mongoose.Schema({
+	user: String,
+	x: Number,
+	y: Number,
+	state: Number,
+	color: String,
+	pressure: Number,
+	timestamp: {type: Date, default: Date.now}
+});
 
 var roomSchema = new mongoose.Schema({ 
 	id: String, 
 	bgColor: String, 
-	dataURL: String, 
+	strokeBuffer: [],
 	size: {
 		width: {type: Number, min: 0}, 
 		height: {type: Number, min: 0}

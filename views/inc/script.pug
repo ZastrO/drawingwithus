@@ -6,9 +6,9 @@ script.
 	};
 
 script.
-	roomConfig = {
+	var roomConfig = {
 		bgColor: "#{room.bgColor}",
-		fadeTime: "#{room.fadeTime}",
+		fadeTime: #{room.fadeTime},
 		color: "000000"
 	};
 if loggedIn 
@@ -142,11 +142,12 @@ script.
 
 	socket.on('newRoom', function(data){
 		context.clearRect(0, 0, canvas.width, canvas.height);
-		var img = new Image;
-		img.onload = function(){
-		  context.drawImage(img,0,0); // Or at whatever offset you like
-		};
-		img.src = data;
+		//- var img = new Image;
+		//- img.onload = function(){
+		//-   context.drawImage(img,0,0); // Or at whatever offset you like
+		//- };
+		//- img.src = data;
+		console.log( data );
 	});
 
 	socket.on('cursor', function(data){
@@ -281,11 +282,11 @@ script.
 		users[id].lastX = null; 
 		users[id].lastY = null;
 		
-		drawNow = true;
+		drawNow = 1;
 	}
 
 	function noDrawFunc(){
-		drawNow = false; 
+		drawNow = 0; 
 		socket.emit('coordinates', {
 			id:id,
 			name:name,
@@ -324,36 +325,46 @@ script.
 			brush:users[id].brush,
 			drawNow:drawNow,
 			x:x,y:y, 
-			room:users[id].room, 
 			color:users[id].color
 		});
+		if( drawNow ){
+			drawNow = 2;
+		}
 	}
 
-	var canvasSnap = setInterval(
-		function(){ 
-			socket.emit('canvas', {
-				room:users[id].room, 
-				dataURL:canvas.toDataURL()
-			});
-		},
-		5000
-	);
+	//- var canvasSnap = setInterval(
+	//- 	function(){ 
+	//- 		socket.emit('canvas', {
+	//- 			room:users[id].room, 
+	//- 			dataURL:canvas.toDataURL()
+	//- 		});
+	//- 	},
+	//- 	5000
+	//- );
 	if(roomConfig.fadeTime !== 0) {
-		/*setInterval(function(){
-			context.save();
-			//context.globalAlpha = 0.08;
-			context.fillStyle = 'rgba(230,230,230,0.05)';
-			context.fillRect( 0, 0, $(canvas).width(), $(canvas).height());
-			context.restore();
-		}, 40);*/
+		setInterval(function(){
+			let imgData = context.getImageData(0,0, canvas.width, canvas.height);
+			let pattern = context.createPattern(canvas, 'repeat');
+			context.clearRect(0,0, canvas.width, canvas.height);
 
-		/*setInterval(function(){
 			context.save();
-			context.globalAlpha = 0.3;
-			context.fillStyle = 'rgb(255,255,255)';
-			context.fillRect( 0, 0, $(canvas).width(), $(canvas).height());
+			context.globalAlpha = 0.8;
+			context.fillStyle = pattern;
+			context.beginPath();
+				context.rect(0,0, canvas.width, canvas.height);
+				context.fill();
+			context.closePath();
+			//- context.putImageData(imgData, 0,0)
 			context.restore();
-		}, 30000);*/
+		}, 4500);
+
+		//- setInterval(function(){
+		//- 	context.save();
+		//- 	context.globalAlpha = 0.3;
+		//- 	context.fillStyle = 'rgb(255,255,255)';
+		//- 	context.fillRect( 0, 0, $(canvas).width(), $(canvas).height());
+		//- 	context.restore();
+		//- }, 30000);
 	}
 
 	window.onbeforeunload = closingCode;

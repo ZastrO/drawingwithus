@@ -111,11 +111,12 @@ socket.on('chat', function(data){
 
 socket.on('newRoom', function(data){
 	context.clearRect(0, 0, canvas.width, canvas.height);
-	var img = new Image;
-	img.onload = function(){
-	  context.drawImage(img,0,0); // Or at whatever offset you like
-	};
-	img.src = data;
+	// var img = new Image;
+	// img.onload = function(){
+	//   context.drawImage(img,0,0); // Or at whatever offset you like
+	// };
+	// img.src = data;
+	console.log( data );
 });
 
 socket.on('cursor', function(data){
@@ -219,10 +220,10 @@ $('#voteToClear').click(function() {
 	socket.emit('initVote', {id:id, name:name, room:users[id].room});
 });
 
-$('body').on('mousedown touchstart',	drawNowFunc);
-//$('body').bind('touchstart',drawNowFunc);
-$('body').on('mouseup touchend touchcancel',		noDrawFunc);
-//$('body').bind('touchend', 	noDrawFunc);
+$('body').on('mousedown touchstart', drawNowFunc);
+//$('body').bind('touchstart', drawNowFunc);
+$('body').on('mouseup touchend touchcancel', noDrawFunc);
+//$('body').bind('touchend', noDrawFunc);
 
 
 $('#canvas').on('mousemove touchmove', 	touchHandler);
@@ -231,11 +232,11 @@ function drawNowFunc(){
 	users[id].lastX = null; 
 	users[id].lastY = null;
 	
-	drawNow = true;
+	drawNow = 1;
 }
 
-function noDrawFunc(){
-	drawNow = false; 
+function noDrawFunc(e){
+	drawNow = 0; 
 	socket.emit('coordinates', {id:id,name:name,drawNow:drawNow});
 }
 
@@ -254,13 +255,16 @@ function touchHandler(e){
 	
 	//console.log("x: "+ x  +" -- y: " + y );
 
-	socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:x,y:y, room:users[id].room, color:users[id].color});
+	socket.emit('coordinates', {id:id,name:name,brush:users[id].brush,drawNow:drawNow,x:x,y:y, color:users[id].color});
+	if( drawNow ){
+		drawNow = 2;
+	}
 }
 
-var canvasSnap = setInterval(
-	function(){ socket.emit('canvas', {room:users[id].room, dataURL:canvas.toDataURL()}) },
-	5000
-);
+// var canvasSnap = setInterval(
+// 	function(){ socket.emit('canvas', {room:users[id].room, dataURL:canvas.toDataURL()}) },
+// 	5000
+// );
 if(roomConfig.fadeTime !== 0) {
 	/*setInterval(function(){
 		context.save();

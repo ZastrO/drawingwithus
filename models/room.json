@@ -1,7 +1,17 @@
 {
 	"id": "ROOM_ID",
 	"bgColor": "#FFFFFF",
-	"dataURL": "",
+	"strokeBuffer": [
+		{
+			"user": "USER_ID",
+			"x": 0,
+			"y": 0,
+			"state": 0,
+			"color": "#000",
+			"pressure": 0.5,
+			"timestamp": 0000
+		}
+	],
 	"size": {"width": 1170, "height": 800},
 	"owner": "USER_ID",
 	"accessLevel": "PUBLIC | INVITE_SESSION | VIEW_ONLY | BLACKLIST | WHITELIST",

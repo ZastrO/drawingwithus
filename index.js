@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 var express = 		require('express');
 var bodyParser = 	require('body-parser');
 var session = 		require('express-session');
@@ -19,7 +21,7 @@ var app = express();
 				return v.toString(16);
 			});
 		},
-		secret: 'drawingfriendsf0r3v3r',
+		secret: process.env.SESSION_SECRET,
 		resave: false,
 		saveUninitialized: false
 	}));
@@ -180,7 +182,7 @@ io.on('connection', function(socket){
 			const roomSafeUsers = Object.keys(room.users).map(key => room.users[key]);
 			io.to(data.room).emit('users', roomSafeUsers);
 			//Gives the new user the current look of the Canvas
-			socket.emit('newRoom',room.dataURL);
+			socket.emit('newRoom',room.strokeBuffer);
 
 		} else {
 			socket.emit('problems', { type:'404', msg:'Sorry! There doesn\'t seem to be a room here. :(' } );
@@ -196,14 +198,14 @@ io.on('connection', function(socket){
 		console.log(`[r/${chalk.red(socket.roomID)}] <${chalk.green(socket.user.name)}> ${data.msg}`);
 	});
 
-	socket.on('canvas',function(data){
-		if( typeof socket.room !== 'undefined' ){
-			socket.room.dataURL = data.dataURL;
-			socket.room.save();
-		} else {
-			socket.emit('problems', { type:'404', msg:'Sorry! There doesn\'t seem to be a room here. :(' } );
-		}
-	});
+	// socket.on('canvas',function(data){
+	// 	if( typeof socket.room !== 'undefined' ){
+	// 		socket.room.dataURL = data.dataURL;
+	// 		socket.room.save();
+	// 	} else {
+	// 		socket.emit('problems', { type:'404', msg:'Sorry! There doesn\'t seem to be a room here. :(' } );
+	// 	}
+	// });
 
 	socket.on('coordinates', function(data) {
 		if(typeof socket.room === 'undefined' || 
@@ -218,6 +220,18 @@ io.on('connection', function(socket){
 			if( socket.ink.level <= 0 ){
 				data.drawNow = false; 
 			}
+		}
+
+		if( data.drawNow ){
+			socket.room.strokeBuffer.push({
+				user: socket.user.id,
+				x: data.x,
+				y: data.y,
+				state: data.drawNow,
+				color: data.color,
+				pressure: 0.5,
+			});
+			// socket.room.save();
 		}
 
 		socket.user.lastX = data.x;
@@ -282,6 +296,7 @@ io.on('connection', function(socket){
 			socket.leave(socket.room);
 			delete room.users[socket.id];
 			delete room.usersInk[socket.id];
+			room.strokeBuffer = [];
 			room.save();
 			//Notifies users in room
 			io.to(socket.roomID).emit('users', room.users);
