@@ -46,53 +46,53 @@ var io = require('socket.io')(http, {
 	pingTimeout: 2000
 });
 
-var chalk = require('chalk');
-var readline = require('readline').createInterface({
-	input: process.stdin,
-	output: process.stdout
-});
+// var chalk = require('chalk');
+// var readline = require('readline').createInterface({
+// 	input: process.stdin,
+// 	output: process.stdout
+// });
 
-function getInput(){
-	readline.question(`[${chalk.cyan('Accepting Input')}]\n`, cmd => {
-		let [command, args] = cmd.replace(' ', '--==--').split('--==--');
-		if( command in cmds ){
-			cmds[command](args);
-		} else {
-			console.log(`No command "${chalk.cyan(command)}" exists.`);
-		}
-		getInput();
-	});
-}
+// function getInput(){
+// 	readline.question(`[${chalk.cyan('Accepting Input')}]\n`, cmd => {
+// 		let [command, args] = cmd.replace(' ', '--==--').split('--==--');
+// 		if( command in cmds ){
+// 			cmds[command](args);
+// 		} else {
+// 			console.log(`No command "${chalk.cyan(command)}" exists.`);
+// 		}
+// 		getInput();
+// 	});
+// }
 
-var cmds = {
-	'@': (input) => {
-		let [room, msg] = input.replace(' ', '--==--').split('--==--');
-		if( room.toLowerCase() == 'all' ){
-			io.emit('chat', {name: 'SYSTEM', msg: msg});
-		} else {
-			io.to(room).emit('chat', {name: 'SYSTEM', msg: msg});
-		}
-	},
-	'r/': (input) => {
-		let [room, command] = input.replace(' ', '--==--').split('--==--');
-		switch( command ){
-			case 'clear':
-				io.to(room).emit('clear', {});
-				console.log(`Cleared r/${chalk.red(room)}'s canvas.`);
-				break;
-			case 'users':
-				console.log(`Users in r/${chalk.red(room)}:`);
-				console.log(app.locals.rooms[room].users);
-				break;
-			default:
-				console.log(`Showing r/${chalk.red(room)}:`);
-				console.log(app.locals.rooms[room]);
-				break;
-		}
-	}
-};
+// var cmds = {
+// 	'@': (input) => {
+// 		let [room, msg] = input.replace(' ', '--==--').split('--==--');
+// 		if( room.toLowerCase() == 'all' ){
+// 			io.emit('chat', {name: 'SYSTEM', msg: msg});
+// 		} else {
+// 			io.to(room).emit('chat', {name: 'SYSTEM', msg: msg});
+// 		}
+// 	},
+// 	'r/': (input) => {
+// 		let [room, command] = input.replace(' ', '--==--').split('--==--');
+// 		switch( command ){
+// 			case 'clear':
+// 				io.to(room).emit('clear', {});
+// 				console.log(`Cleared r/${chalk.red(room)}'s canvas.`);
+// 				break;
+// 			case 'users':
+// 				console.log(`Users in r/${chalk.red(room)}:`);
+// 				console.log(app.locals.rooms[room].users);
+// 				break;
+// 			default:
+// 				console.log(`Showing r/${chalk.red(room)}:`);
+// 				console.log(app.locals.rooms[room]);
+// 				break;
+// 		}
+// 	}
+// };
 
-getInput();
+// getInput();
 
 app.get('/', function (req, res) {
 	res.render('index', { title : 'Home' }  );
