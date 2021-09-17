@@ -92,9 +92,10 @@ if( process.env.STATE == 'local' ){
 			}
 		}
 	};
+
+	getInput();
 }
 
-getInput();
 
 app.get('/', function (req, res) {
 	res.render('index', { title : 'Home' }  );
